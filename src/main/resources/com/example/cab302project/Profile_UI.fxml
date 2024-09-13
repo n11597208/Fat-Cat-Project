@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.effect.DropShadow?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Rectangle?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.shape.Circle?>
+<?import javafx.scene.layout.Region?>
+<VBox alignment="CENTER" spacing="20.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.example.cab302project.ProfileController">
+    <StackPane xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8">
+        <!-- Rectangle Image in the background -->
+        <ImageView fitHeight="150.0" fitWidth="640.0" pickOnBounds="true" preserveRatio="false">
+            <image>
+                <Image url="@../../../Image_assets/banner.jpeg"/>
+            </image>
+        </ImageView>
+
+        <!-- Circular Image in the foreground -->
+        <ImageView fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true">
+            <image>
+                <Image url="@../../../Image_assets/profile_picture.jpg"/>
+            </image>
+            <!-- Clip the image to make it circular -->
+            <clip>
+                <!-- Center the Circle within the ImageView and match the radius to the size -->
+                <Circle centerX="50" centerY="50" radius="50"/>
+            </clip>
+        </ImageView>
+    </StackPane>
+    <Label fx:id="welcomeText1" text="Username" style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
+    <HBox fillHeight="false" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="30.0" prefWidth="500.0">
+        <children>
+            <Label fx:id="welcomeText2" text="Followers" style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
+            <Region fx:id="spacer"/>
+            <Label fx:id="welcomeText3" text="Posts" style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
+        </children>
+    </HBox>
+    <HBox fillHeight="false" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="30.0" prefWidth="500.0">
+        <children>
+            <Label fx:id="welcomeText4" text="  100" style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
+            <Region fx:id="spacer2"/>
+            <Label fx:id="welcomeText5" text="10" style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
+        </children>
+    </HBox>
+    <Label fx:id="Post" text="Post" style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
+
+    <Button fx:id="nextButton"
+            text="Next"
+            onAction="#onNextButtonClick"
+    />
+
+</VBox>
