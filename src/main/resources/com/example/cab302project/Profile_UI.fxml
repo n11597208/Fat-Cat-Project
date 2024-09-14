@@ -19,21 +19,16 @@
 <VBox alignment="CENTER" spacing="20.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="com.example.cab302project.ProfileController">
     <StackPane xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8">
-        <!-- Rectangle Image in the background -->
         <ImageView fitHeight="150.0" fitWidth="640.0" pickOnBounds="true" preserveRatio="false">
             <image>
                 <Image url="@../../../Image_assets/banner.jpeg"/>
             </image>
         </ImageView>
-
-        <!-- Circular Image in the foreground -->
         <ImageView fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true">
             <image>
                 <Image url="@../../../Image_assets/profile_picture.jpg"/>
             </image>
-            <!-- Clip the image to make it circular -->
             <clip>
-                <!-- Center the Circle within the ImageView and match the radius to the size -->
                 <Circle centerX="50" centerY="50" radius="50"/>
             </clip>
         </ImageView>

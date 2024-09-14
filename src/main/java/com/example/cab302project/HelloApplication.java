@@ -17,7 +17,9 @@ public class HelloApplication extends Application {
         // Set up the database and insert a sample user
         SqliteConnection.setupDatabase();
 
+
         FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("Login_UI.fxml"));
+
         Scene scene = new Scene(fxmlLoader.load());
         stage.setTitle("RateMyRide!");
         stage.setScene(scene);
