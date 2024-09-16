@@ -1,9 +1,6 @@
 package com.example.cab302project;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.Statement;
+import java.sql.*;
 
 public class SQLitePostDOA {
     private Connection connection;
@@ -65,6 +62,59 @@ public class SQLitePostDOA {
             e.printStackTrace();
         }
     }
+//    @Override
+    void updatePost(Post post, String userName) throws SQLException {
+        try {
+            PreparedStatement statement = connection.prepareStatement(
+                    "UPDATE posts SET postTitle = ?, postDescription = ?, carMake = ?, carModel = ?, postLocation = ? WHERE userId = ?",
+                    Statement.RETURN_GENERATED_KEYS);
+
+            // Set the parameters (1-based index)
+            statement.setString(1, post.getTitle());
+            statement.setString(2, post.getDescription());
+            statement.setString(3, post.getMake());
+            statement.setString(4, post.getModel());
+            statement.setString(5, post.getLocation());
+            statement.setString(6, userName); // Assuming userName corresponds to userId
+
+            // Execute the update
+            statement.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+//    @Override
+    public void deletePost(Post post) {
+        try {
+            PreparedStatement statement = connection.prepareStatement("DELETE FROM posts WHERE id = ?");
+            statement.setInt(1, post.getId());
+            statement.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    public Post getPost(int id) {
+        try {
+            PreparedStatement statement = connection.prepareStatement("SELECT * FROM post WHERE id = ?");
+            statement.setInt(1, id);
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                String title = resultSet.getString("postTitle");
+                String description = resultSet.getString("postDescription");
+                String make = resultSet.getString("carMake");
+                String model = resultSet.getString("carModel");
+                String location = resultSet.getString("postLocation");
+                Blob image = resultSet.getBlob("postImage");
+                Post post = new Post(title, description, make, model, location, image.toString());
+                post.setId(id);
+                return post;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
 
 
 
