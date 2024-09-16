@@ -32,6 +32,7 @@ public class LoginController {
         // Check if the username and password are valid using login system
         if (loginSystem.checkLogin(username, password)) {
             LoginStatus.setText("Login successful!");
+            Session.setLoggedInUser(username);
 
             try {
                 // Get the current stage
@@ -61,5 +62,22 @@ public class LoginController {
 
     public LoginController() {
         SqliteConnection LoginDAO = new SqliteConnection();
+        SQLitePostDOA postDAO = new SQLitePostDOA();
     }
+    public static class Session {
+        private static String loggedInUser;
+
+        public static void setLoggedInUser(String username) {
+            loggedInUser = username;
+        }
+
+        public static String getLoggedInUser() {
+            return loggedInUser;
+        }
+
+        public static void clearSession() {
+            loggedInUser = null;
+        }
+    }
+
 }
