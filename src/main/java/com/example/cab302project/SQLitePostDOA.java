@@ -9,7 +9,7 @@ import java.util.List;
 public class SQLitePostDOA {
     private static Connection connection;
 
-    // Constructor
+
     public SQLitePostDOA() {
         connection = SqliteConnection.connect();
         createTable();
@@ -80,15 +80,15 @@ public class SQLitePostDOA {
                     "UPDATE posts SET postTitle = ?, postDescription = ?, carMake = ?, carModel = ?, postLocation = ? WHERE userId = ?",
                     Statement.RETURN_GENERATED_KEYS);
 
-            // Set the parameters (1-based index)
+
             statement.setString(1, post.getTitle());
             statement.setString(2, post.getDescription());
             statement.setString(3, post.getMake());
             statement.setString(4, post.getModel());
             statement.setString(5, post.getLocation());
-            statement.setString(6, userName); // Assuming userName corresponds to userId
+            statement.setString(6, userName);
 
-            // Execute the update
+
             statement.executeUpdate();
         } catch (Exception e) {
             e.printStackTrace();
@@ -126,14 +126,14 @@ public class SQLitePostDOA {
 //        return null;
 //    }
     public static List<Post> getPostsByAuthor(String author) {
-        List<Post> posts = new ArrayList<>();  // Store multiple posts
+        List<Post> posts = new ArrayList<>();
 
         try {
             PreparedStatement statement = connection.prepareStatement("SELECT * FROM posts WHERE userId = ?");
             statement.setString(1, author);
             ResultSet resultSet = statement.executeQuery();
 
-            // Loop through the ResultSet to fetch multiple posts
+
             while (resultSet.next()) {
                 Integer postId = resultSet.getInt("id");
                 String title = resultSet.getString("postTitle");
@@ -146,24 +146,18 @@ public class SQLitePostDOA {
                 Integer numberComments = resultSet.getInt("numberOfComments");
                 Integer numberShares = resultSet.getInt("numberOfShares");
 
-                // Handle Blob for postImage
-//                Blob imageBlob = resultSet.getBlob("postImage");
-//                byte[] imageBytes = imageBlob.getBytes(1, (int) imageBlob.length());  // Convert Blob to byte array
 
-                // Create Post object and set its properties
                 Post post = new Post(title, description, author, make, model, location, imageBytes, rating, numberComments, numberShares);
                 post.setId(postId);
 
-                // Add post to the list
                 posts.add(post);
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        return posts;  // Return list of posts
+        return posts;
     }
 
 }
-  // Other methods...
 

@@ -61,7 +61,7 @@
     </ScrollPane>
 
     <Button fx:id="nextButton"
-            text="Next"
+            text="Create Post"
             onAction="#onNextButtonClick"
     />
 

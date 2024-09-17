@@ -7,7 +7,6 @@ import java.sql.SQLException;
 
 public class LoginSystem {
 
-    // method to check login credentials
     public boolean checkLogin(String username, String password) {
         String sql = "SELECT * FROM users WHERE username = ? AND password = ?";
 
@@ -19,7 +18,6 @@ public class LoginSystem {
 
             ResultSet rs = pstmt.executeQuery();
 
-            // Check if a result exists (valid login)
             return rs.next();
 
         } catch (SQLException e) {

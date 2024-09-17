@@ -1,5 +1,6 @@
 package com.example.cab302project;
 
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -29,26 +30,25 @@ public class LoginController {
         String username = UsernameField.getText();
         String password = PasswordField.getText();
 
-        // Check if the username and password are valid using login system
         if (loginSystem.checkLogin(username, password)) {
             LoginStatus.setText("Login successful!");
             Session.setLoggedInUser(username);
 
             try {
-                // Get the current stage
+
                 Stage window = (Stage) UsernameField.getScene().getWindow();
 
-                // Load the new FXML file (Profile_UI.fxml)
-                FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("Profile_UI.fxml"));
-                Parent root = fxmlLoader.load(); // Load the Profile UI
 
-                // Create a new scene with the specified width and height
+                FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("Profile_UI.fxml"));
+                Parent root = fxmlLoader.load();
+
+
                 Scene scene = new Scene(root, HelloApplication.WIDTH, HelloApplication.HEIGHT);
 
-                // Set the new scene on the window (stage)
+
                 window.setScene(scene);
 
-                // Show the window with the new scene
+
                 window.show();
 
             } catch (IOException e) {
@@ -64,6 +64,21 @@ public class LoginController {
         SqliteConnection LoginDAO = new SqliteConnection();
         SQLitePostDOA postDAO = new SQLitePostDOA();
     }
+
+    public void HandleSignUp(ActionEvent actionEvent) throws IOException {
+        Stage window = (Stage) UsernameField.getScene().getWindow();
+
+
+        FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("registration.fxml"));
+        Parent root = fxmlLoader.load();
+
+
+        Scene scene = new Scene(root, HelloApplication.WIDTH, HelloApplication.HEIGHT);
+
+
+        window.setScene(scene);
+    }
+
     public static class Session {
         private static String loggedInUser;
 

@@ -22,7 +22,7 @@ import java.util.List;
 public class ProfileController {
 
     @FXML
-    private VBox postsContainer;  // Make sure this matches your FXML fx:id for the VBox
+    private VBox postsContainer;
 
     @FXML
     private Label welcomeText1;
@@ -34,6 +34,12 @@ public class ProfileController {
     private Label welcomeText3;
 
     @FXML
+    private Label welcomeText4;
+
+    @FXML
+    private Label welcomeText5;
+
+    @FXML
     private Region spacer;
 
     @FXML
@@ -42,23 +48,23 @@ public class ProfileController {
     @FXML
     private Button nextButton;
 
-    private LoginController.Session session;  // Declare session at the class level
+    private LoginController.Session session;
 
     @FXML
     public void initialize() {
-        // Initialize session and update labels
-        session = new LoginController.Session();  // Initialize session
-        changeLabelText();  // Call the method to update the labels
+
+        session = new LoginController.Session();
+        changeLabelText();
         HBox.setHgrow(spacer, Priority.ALWAYS);
         HBox.setHgrow(spacer2, Priority.ALWAYS);
 
         String currentUser = session.getLoggedInUser();
-        List<Post> posts = SQLitePostDOA.getPostsByAuthor(currentUser);  // Get posts from your DB or service
+        List<Post> posts = SQLitePostDOA.getPostsByAuthor(currentUser);
 
-        // Dynamically add each post to the VBox inside the ScrollPane
+
         for (Post post : posts) {
-            VBox postBox = createPostBox(post);  // Dynamically create a post layout
-            postsContainer.getChildren().add(postBox);  // Add the post layout to the container
+            VBox postBox = createPostBox(post);
+            postsContainer.getChildren().add(postBox);
         }
     }
 
@@ -71,62 +77,79 @@ public class ProfileController {
     }
 
     private void changeLabelText() {
-        // Get the current logged-in user and set the label text
+
         String currentUser = session.getLoggedInUser();
         welcomeText1.setText(currentUser);
+        welcomeText4.setText("0");
+        welcomeText5.setText("0");
     }
 
     private VBox createPostBox(Post post) {
-        // Create VBox for individual post
+
         VBox postBox = new VBox();
         postBox.setAlignment(Pos.CENTER_LEFT);
         postBox.setSpacing(10);
         postBox.setPadding(new Insets(10));
         postBox.setStyle("-fx-border-color: lightgray; -fx-border-width: 1;");
 
-        // Add an image for the post (replace logo.png with post image)
+
         ImageView postImageView = new ImageView();
         postImageView.setFitWidth(150);
         postImageView.setFitHeight(150);
-//         If post has an image, use it; otherwise, use a default image
+
         if (post.getPostImage() != null) {
             byte[] imageBytes = post.getPostImage();
-            System.out.println("Image size: " + imageBytes.length);  // Debug to check the image size
+            System.out.println("Image size: " + imageBytes.length);
             postImageView.setImage(new Image(new ByteArrayInputStream(imageBytes)));
         } else {
             System.out.println("No image for this post");
-            // Optionally, set a placeholder image if no image is available
-//            postImageView.setImage(new Image("path/to/placeholder.png"));
         }
 
-        // Post title
         Label postTitle = new Label(post.getTitle());
         postTitle.setStyle("-fx-font-size: 18px; -fx-font-weight: bold;");
 
-        // Post description (optional)
+
         Label postDescription = new Label(post.getDescription());
         postDescription.setWrapText(true);
 
-        // Add Star Rating, Comments, Shares using HBox
+
         HBox detailsBox = new HBox();
         detailsBox.setAlignment(Pos.CENTER_LEFT);
         detailsBox.setSpacing(10);
 
-        // Add Star Rating
+
         Label ratingLabel = new Label("Rating: " + post.getRating());
 
-        // Add Comments
+
         Label commentLabel = new Label("Comments: " + post.getNumComments());
 
-        // Add Shares
+
         Label shareLabel = new Label("Shares: " + post.getNumshares());
 
-        // Add labels to HBox
-        detailsBox.getChildren().addAll(ratingLabel, commentLabel, shareLabel);
 
-        // Add components to VBox
-        postBox.getChildren().addAll(postImageView, postTitle, postDescription, detailsBox);
+        detailsBox.getChildren().addAll(ratingLabel, commentLabel, shareLabel);
+        HBox controlBox = new HBox();
+        controlBox.setAlignment(Pos.CENTER_LEFT);
+        controlBox.setSpacing(10);
+
+        Button editButton = new Button("Edit");
+
+        Button deleteButton = new Button("Delete" );
+//        deleteButton.setOnAction(event -> {
+////            PostManager.deletePost(post.getPostID());
+//        });
+        controlBox.getChildren().addAll(editButton, deleteButton);
+
+
+        postBox.getChildren().addAll(postImageView, postTitle, postDescription, detailsBox, controlBox);
 
         return postBox;
     }
+//    private void onDelete() {
+//        // Get the selected contact from the list view
+//        Post selectedPost = contactsListView.getSelectionModel().getSelectedItem();
+//        if (selectedPost != null) {
+//            PostManager.deletePost(selectedPost);
+//        }
+
 }

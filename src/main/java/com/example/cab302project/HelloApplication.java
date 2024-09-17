@@ -14,7 +14,7 @@ public class HelloApplication extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
-        // Set up the database and insert a sample user
+
         SqliteConnection.setupDatabase();
 
 

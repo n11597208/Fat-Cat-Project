@@ -19,9 +19,9 @@ import java.io.IOException;
 import static com.example.cab302project.LoginController.Session.getLoggedInUser;
 
 public class CreatePostController {
-    // Declare global variables here
-    private String filename = null; // Global variable for filename
-    private int s = 0; // Global variable for s
+
+    private String filename = null;
+    private int s = 0;
     private byte[] post_image = null;
 
     @FXML
@@ -96,8 +96,8 @@ public class CreatePostController {
         String location = LocationField.getText();
         byte[] image = post_image;
 
-        // Assuming the userId is fetched from the current session or context
-        String userName = getLoggedInUser(); // Replace this with actual logic to get the logged-in user's ID
+
+        String userName = getLoggedInUser();
 
         Post newPost = new Post(postTitle, postDescription, "author", carModel, carMake, location, image, 0, 0, 0);
 
@@ -110,7 +110,6 @@ public class CreatePostController {
     }
 
     private void onAdd() {
-        // Default values for a new post
         final String DEFAULT_TITLE = "";
         final String DEFAULT_DESCRIPTION = "";
         final String DEFAULT_MAKE = "";

@@ -27,8 +27,11 @@ public class SqliteConnection {
         String createTableSQL = """
                     CREATE TABLE IF NOT EXISTS users (
                         id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        firstName TEXT NOT NULL,
+                        lastName TEXT NOT NULL,
+                        email TEXT NOT NULL,        
                         username TEXT NOT NULL UNIQUE,
-                        password TEXT NOT NULL,
+                        password TEXT NOT NULL,                                            
                         followers INTEGER NOT NULL,
                         numberOfPosts INTEGER NOT NULL
                     );
@@ -52,5 +55,6 @@ public class SqliteConnection {
             System.out.println(e.getMessage());
         }
     }
+
 
 }
