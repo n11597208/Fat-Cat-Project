@@ -7,9 +7,9 @@ import java.sql.SQLException;
 
 public class LoginSystem {
 
-    // method to check login credentials
+    // Method to check login credentials
     public boolean checkLogin(String username, String password) {
-        String sql = "SELECT * FROM users WHERE username = ? AND password = ?";
+        String sql = "SELECT * FROM users WHERE username = ? AND password = ?"; // Ensure table `users` exists in your DB
 
         try (Connection conn = SqliteConnection.connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
