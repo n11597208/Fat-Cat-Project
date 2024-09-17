@@ -40,7 +40,7 @@ public class SqliteConnection {
 
         // SQLite to insert a sample user
         String insertSampleUserSQL = """
-                    INSERT OR IGNORE INTO users (username, password, followers, numberOfPosts) VALUES ('admin', '1234', 0,0);
+                    INSERT OR IGNORE INTO users (username, password, followers, numberOfPosts, firstName, lastName, email) VALUES ('admin', '1234', 0,0, 'John', 'Doe', 'John.Doe@gmail.com');
                 """;
 
         try (Connection conn = connect(); Statement stmt = conn.createStatement()) {

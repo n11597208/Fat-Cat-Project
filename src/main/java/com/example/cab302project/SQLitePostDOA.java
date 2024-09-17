@@ -24,7 +24,7 @@ public class SQLitePostDOA {
         }
     }
 
-    private void createTable() {
+    public void createTable() {
         try {
             Statement statement = connection.createStatement();
             String query = "CREATE TABLE IF NOT EXISTS posts ("
@@ -47,7 +47,7 @@ public class SQLitePostDOA {
         }
     }
 
-    void addPost(Post post, String userName) {
+    public void addPost(Post post, String userName) {
         try {
             PreparedStatement statement = connection.prepareStatement(
                     "INSERT INTO posts (userId, postTitle, postDescription, carMake, carModel, postLocation, postImage, rating, numberOfComments, numberOfShares) VALUES (?, ?, ?, ?, ?, ?, ?,?,?,?)",
@@ -74,7 +74,7 @@ public class SQLitePostDOA {
         }
     }
 //    @Override
-    void updatePost(Post post, String userName) throws SQLException {
+public void updatePost(Post post, String userName) throws SQLException {
         try {
             PreparedStatement statement = connection.prepareStatement(
                     "UPDATE posts SET postTitle = ?, postDescription = ?, carMake = ?, carModel = ?, postLocation = ? WHERE userId = ?",
