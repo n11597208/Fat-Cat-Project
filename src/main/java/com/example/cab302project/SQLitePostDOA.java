@@ -1,9 +1,13 @@
 package com.example.cab302project;
 
+import jdk.internal.reflect.FieldAccessor;
+
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class SQLitePostDOA {
-    private Connection connection;
+    private static Connection connection;
 
     // Constructor
     public SQLitePostDOA() {
@@ -31,7 +35,10 @@ public class SQLitePostDOA {
                     + "carMake VARCHAR NOT NULL,"
                     + "carModel VARCHAR NOT NULL,"
                     + "postLocation VARCHAR NULL,"
-                    + "postImage BLOB NULL," // Allow postImage to be NULL
+                    + "postImage BLOB NULL,"
+                    + "rating INTEGER NULL,"
+                    + "numberOfComments INTEGER NULL,"
+                    + "numberOfShares INTEGER NULL,"
                     + "FOREIGN KEY(userId) REFERENCES users(id)"
                     + ")";
             statement.execute(query);
@@ -43,7 +50,7 @@ public class SQLitePostDOA {
     void addPost(Post post, String userName) {
         try {
             PreparedStatement statement = connection.prepareStatement(
-                    "INSERT INTO posts (userId, postTitle, postDescription, carMake, carModel, postLocation) VALUES (?, ?, ?, ?, ?, ?)",
+                    "INSERT INTO posts (userId, postTitle, postDescription, carMake, carModel, postLocation, postImage, rating, numberOfComments, numberOfShares) VALUES (?, ?, ?, ?, ?, ?, ?,?,?,?)",
                     Statement.RETURN_GENERATED_KEYS
             );
             statement.setString(1, userName);
@@ -52,6 +59,10 @@ public class SQLitePostDOA {
             statement.setString(4, post.getMake());
             statement.setString(5, post.getModel());
             statement.setString(6, post.getLocation());
+            statement.setBytes(7, post.getPostImage());
+            statement.setInt(8, 0);
+            statement.setInt(9, 0);
+            statement.setInt(10, 0);
             statement.executeUpdate();
 
             ResultSet generatedKeys = statement.getGeneratedKeys();
@@ -93,30 +104,66 @@ public class SQLitePostDOA {
             e.printStackTrace();
         }
     }
-    public Post getPost(int id) {
+//    public Post getPost(int id) {
+//        try {
+//            PreparedStatement statement = connection.prepareStatement("SELECT * FROM post WHERE id = ?");
+//            statement.setInt(1, id);
+//            ResultSet resultSet = statement.executeQuery();
+//            if (resultSet.next()) {
+//                String title = resultSet.getString("postTitle");
+//                String description = resultSet.getString("postDescription");
+//                String make = resultSet.getString("carMake");
+//                String model = resultSet.getString("carModel");
+//                String location = resultSet.getString("postLocation");
+//                Blob image = resultSet.getBlob("postImage");
+//                Post post = new Post(title, description, make, model, location, image);
+//                post.setId(id);
+//                return post;
+//            }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//        return null;
+//    }
+    public static List<Post> getPostsByAuthor(String author) {
+        List<Post> posts = new ArrayList<>();  // Store multiple posts
+
         try {
-            PreparedStatement statement = connection.prepareStatement("SELECT * FROM post WHERE id = ?");
-            statement.setInt(1, id);
+            PreparedStatement statement = connection.prepareStatement("SELECT * FROM posts WHERE userId = ?");
+            statement.setString(1, author);
             ResultSet resultSet = statement.executeQuery();
-            if (resultSet.next()) {
+
+            // Loop through the ResultSet to fetch multiple posts
+            while (resultSet.next()) {
+                Integer postId = resultSet.getInt("id");
                 String title = resultSet.getString("postTitle");
                 String description = resultSet.getString("postDescription");
                 String make = resultSet.getString("carMake");
                 String model = resultSet.getString("carModel");
                 String location = resultSet.getString("postLocation");
-                Blob image = resultSet.getBlob("postImage");
-                Post post = new Post(title, description, make, model, location, image.toString());
-                post.setId(id);
-                return post;
+                byte[] imageBytes = resultSet.getBytes("postImage");
+                Integer rating = resultSet.getInt("rating");
+                Integer numberComments = resultSet.getInt("numberOfComments");
+                Integer numberShares = resultSet.getInt("numberOfShares");
+
+                // Handle Blob for postImage
+//                Blob imageBlob = resultSet.getBlob("postImage");
+//                byte[] imageBytes = imageBlob.getBytes(1, (int) imageBlob.length());  // Convert Blob to byte array
+
+                // Create Post object and set its properties
+                Post post = new Post(title, description, author, make, model, location, imageBytes, rating, numberComments, numberShares);
+                post.setId(postId);
+
+                // Add post to the list
+                posts.add(post);
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return null;
+
+        return posts;  // Return list of posts
     }
 
-
-
-
-    // Other methods...
 }
+  // Other methods...
+

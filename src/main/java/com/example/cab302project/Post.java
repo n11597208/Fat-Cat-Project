@@ -8,14 +8,22 @@ public class Post {
     private String model;
     private String make;
     private String location;
+    private byte[] postImage;
+    private Integer rating;
+    private Integer numComments;
+    private Integer numshares;
 
-    public Post(String title, String description, String author, String model, String make, String location) {
+    public Post(String title, String description, String author, String model, String make, String location, byte[] image, Integer rating, Integer numComments, Integer numshares) {
         this.title = title;
         this.description = description;
         this.author = author;
         this.model = model;
         this.make = make;
         this.location = location;
+        this.postImage = image;
+        this.rating = 0;
+        this.numComments = 0;
+        this.numshares = 0;
     }
 
     public int getId() {
@@ -72,5 +80,33 @@ public class Post {
 
     public void setLocation(String location) {
         this.location = location;
+    }
+
+    public byte[] getPostImage() {
+        return postImage;
+    }
+
+    public void setPostImage(byte[] postImage) {
+        this.postImage = postImage;
+    }
+
+    public Integer getRating() {
+        return rating;
+    }
+
+    public void setRating(Integer rating) {
+        this.rating = rating;
+    }
+    public Integer getNumComments() {
+        return numComments;
+    }
+    public void setNumComments(Integer numComments) {
+        this.numComments = numComments;
+    }
+    public Integer getNumshares() {
+        return numshares;
+    }
+    public void setNumshares(Integer numshares) {
+        this.numshares = numshares;
     }
 }
