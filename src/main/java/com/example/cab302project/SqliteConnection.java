@@ -21,23 +21,24 @@ public class SqliteConnection {
     }
 
 
-
     // method to set up the database
     public static void setupDatabase() {
         // SQLite to create a users table if it doesn't exist
         String createTableSQL = """
-            CREATE TABLE IF NOT EXISTS users (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                username TEXT NOT NULL UNIQUE,
-                password TEXT NOT NULL
-                                  
-            );
-        """;
+                    CREATE TABLE IF NOT EXISTS users (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        username TEXT NOT NULL UNIQUE,
+                        password TEXT NOT NULL,
+                        followers INTEGER NOT NULL,
+                        numberOfPosts INTEGER NOT NULL
+                    );
+                """;
+
 
         // SQLite to insert a sample user
         String insertSampleUserSQL = """
-            INSERT OR IGNORE INTO users (username, password) VALUES ('admin', '1234');
-        """;
+                    INSERT OR IGNORE INTO users (username, password, followers, numberOfPosts) VALUES ('admin', '1234', 0,0);
+                """;
 
         try (Connection conn = connect(); Statement stmt = conn.createStatement()) {
             // Execute the table creation
