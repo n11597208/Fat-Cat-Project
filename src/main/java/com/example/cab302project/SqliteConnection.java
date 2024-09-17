@@ -12,19 +12,17 @@ public class SqliteConnection {
         Connection conn = null;
         try {
             conn = DriverManager.getConnection(DB_URL);
-
         } catch (SQLException e) {
             System.out.println(e.getMessage());
-
         }
         return conn;
     }
 
 
 
-    // method to set up the database
+    // Method to set up the database
     public static void setupDatabase() {
-        // SQLite to create a users table if it doesn't exist
+        // SQL to create a users table if it doesn't exist
         String createTableSQL = """
             CREATE TABLE IF NOT EXISTS users (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -33,7 +31,7 @@ public class SqliteConnection {
             );
         """;
 
-        // SQLite to insert a sample user
+        // SQL to insert a sample user (you can replace this with hashed password logic)
         String insertSampleUserSQL = """
             INSERT OR IGNORE INTO users (username, password) VALUES ('admin', '1234');
         """;
@@ -41,11 +39,9 @@ public class SqliteConnection {
         try (Connection conn = connect(); Statement stmt = conn.createStatement()) {
             // Execute the table creation
             stmt.execute(createTableSQL);
-
             // Insert a sample user
             stmt.execute(insertSampleUserSQL);
             System.out.println("Database setup completed and sample user added.");
-
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
