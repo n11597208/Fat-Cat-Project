@@ -55,9 +55,9 @@ public class PostTest {
     public void testDefaultValues() {
         Post post = new Post("Title", "Description", "Author", "Model", "Make", "Location", new byte[0], 0, 0, 0);
 
-        // Validate that default values are set correctly
         assertEquals(0, post.getRating());
         assertEquals(0, post.getNumComments());
         assertEquals(0, post.getNumshares());
     }
+
 }

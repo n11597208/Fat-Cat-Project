@@ -54,7 +54,6 @@
         <content>
             <VBox alignment="CENTER" fillWidth="false">
                 <VBox fx:id="postsContainer" alignment="CENTER" spacing="20.0">
-                    <!-- Dynamic posts will be added here -->
                 </VBox>
             </VBox>
         </content>

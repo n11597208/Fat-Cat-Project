@@ -1,7 +1,5 @@
 package com.example.cab302project;
 
-import jdk.internal.reflect.FieldAccessor;
-
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -74,57 +72,81 @@ public class SQLitePostDOA {
         }
     }
 //    @Override
-public void updatePost(Post post, String userName) throws SQLException {
-        try {
-            PreparedStatement statement = connection.prepareStatement(
-                    "UPDATE posts SET postTitle = ?, postDescription = ?, carMake = ?, carModel = ?, postLocation = ? WHERE userId = ?",
-                    Statement.RETURN_GENERATED_KEYS);
+public void updatePost(Post post, int postId) throws SQLException {
+    String sql = "UPDATE posts SET postTitle = ?, postDescription = ?, carMake = ?, carModel = ?, postLocation = ? WHERE id = ?";
 
+    // Use try-with-resources for automatic resource management
+    try (PreparedStatement statement = connection.prepareStatement(sql)) {
+        // Set parameters in the prepared statement
+        statement.setString(1, post.getTitle());
+        statement.setString(2, post.getDescription());
+        statement.setString(3, post.getMake());
+        statement.setString(4, post.getModel());
+        statement.setString(5, post.getLocation());
+        statement.setInt(6, postId);
 
-            statement.setString(1, post.getTitle());
-            statement.setString(2, post.getDescription());
-            statement.setString(3, post.getMake());
-            statement.setString(4, post.getModel());
-            statement.setString(5, post.getLocation());
-            statement.setString(6, userName);
+        // Execute the update
+        statement.executeUpdate();
 
-
-            statement.executeUpdate();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    } catch (SQLException e) {
+        e.printStackTrace(); // Log the exception
+        throw e; // Optionally rethrow the exception if needed
     }
+}
+
+
 //    @Override
-    public void deletePost(Post post) {
+    public void deletePost(Integer postId) {
         try {
             PreparedStatement statement = connection.prepareStatement("DELETE FROM posts WHERE id = ?");
-            statement.setInt(1, post.getId());
+            statement.setInt(1,postId);
             statement.executeUpdate();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-//    public Post getPost(int id) {
-//        try {
-//            PreparedStatement statement = connection.prepareStatement("SELECT * FROM post WHERE id = ?");
-//            statement.setInt(1, id);
-//            ResultSet resultSet = statement.executeQuery();
-//            if (resultSet.next()) {
-//                String title = resultSet.getString("postTitle");
-//                String description = resultSet.getString("postDescription");
-//                String make = resultSet.getString("carMake");
-//                String model = resultSet.getString("carModel");
-//                String location = resultSet.getString("postLocation");
-//                Blob image = resultSet.getBlob("postImage");
-//                Post post = new Post(title, description, make, model, location, image);
-//                post.setId(id);
-//                return post;
-//            }
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//        return null;
-//    }
+    public int getNumPosts(String userName) throws SQLException {
+        int numPosts = 0;
+        PreparedStatement statement = connection.prepareStatement("SELECT COUNT(*) FROM posts WHERE userID = ?");
+        statement.setString(1, userName);
+        ResultSet resultSet = statement.executeQuery();
+        if (resultSet.next()) {
+            numPosts = resultSet.getInt(1);
+        }
+        resultSet.close();
+        statement.close();
+        return numPosts;
+    }
+
+    public static Post getPost(int id) {
+        String sql = "SELECT * FROM posts WHERE id = ?";
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setInt(1, id);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    Integer postId = resultSet.getInt("id");
+                    String title = resultSet.getString("postTitle");
+                    String description = resultSet.getString("postDescription");
+                    String userID = resultSet.getString("userID");
+                    String make = resultSet.getString("carMake");
+                    String model = resultSet.getString("carModel");
+                    String location = resultSet.getString("postLocation");
+                    byte[] imageBytes = resultSet.getBytes("postImage");
+                    Integer rating = resultSet.getInt("rating");
+                    Integer numberComments = resultSet.getInt("numberOfComments");
+                    Integer numberShares = resultSet.getInt("numberOfShares");
+
+                    Post post = new Post(title, description, userID, make, model, location, imageBytes, rating, numberComments, numberShares);
+                    post.setId(postId);
+                    return post;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     public static List<Post> getPostsByAuthor(String author) {
         List<Post> posts = new ArrayList<>();
 

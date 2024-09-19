@@ -1,5 +1,7 @@
 package com.example.cab302project;
 
+import java.sql.SQLException;
+
 import static com.example.cab302project.LoginController.Session.getLoggedInUser;
 
 public class PostManager {
@@ -10,7 +12,10 @@ public class PostManager {
     public static void addPost(Post post) {
         postDAO.addPost(post, getLoggedInUser());
     }
-    public void deletePost(Post post) {
-        postDAO.deletePost(post);
+    public void deletePost(Integer postId) {
+        postDAO.deletePost(postId);
+    }
+    public void updatePost(Post post) throws SQLException {
+        postDAO.updatePost(post, post.getId());
     }
 }

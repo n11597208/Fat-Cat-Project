@@ -17,6 +17,7 @@ import javafx.stage.Stage;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.List;
 
 public class ProfileController {
@@ -48,10 +49,21 @@ public class ProfileController {
     @FXML
     private Button nextButton;
 
+    SQLitePostDOA sqLitePostDOA = new SQLitePostDOA();
+
     private LoginController.Session session;
+    public static int id;
+
+    public void setId(int newId) {
+        id = newId;
+    }
+
+    public static int getId() {
+        return id;
+    }
 
     @FXML
-    public void initialize() {
+    public void initialize() throws SQLException {
 
         session = new LoginController.Session();
         changeLabelText();
@@ -67,7 +79,6 @@ public class ProfileController {
             postsContainer.getChildren().add(postBox);
         }
     }
-
     @FXML
     protected void onNextButtonClick() throws IOException {
         Stage stage = (Stage) nextButton.getScene().getWindow();
@@ -76,12 +87,12 @@ public class ProfileController {
         stage.setScene(scene);
     }
 
-    private void changeLabelText() {
+    private void changeLabelText() throws SQLException {
 
         String currentUser = session.getLoggedInUser();
         welcomeText1.setText(currentUser);
         welcomeText4.setText("0");
-        welcomeText5.setText("0");
+        welcomeText5.setText(String.valueOf(sqLitePostDOA.getNumPosts(currentUser)));
     }
 
     private VBox createPostBox(Post post) {
@@ -133,11 +144,42 @@ public class ProfileController {
         controlBox.setSpacing(10);
 
         Button editButton = new Button("Edit");
+        editButton.setOnAction(e -> {
+            try {
+                int id = post.getId();
+                System.out.println("Edit post: " + id);
+                setId(id);
+
+                // Load FXML
+                FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("Edit_Post.fxml"));
+                Scene scene = new Scene(fxmlLoader.load(), HelloApplication.WIDTH, HelloApplication.HEIGHT);
+
+                // Get the controller and set the post ID before showing the scene
+                EditPostController editPostController = fxmlLoader.getController();
+
+
+                // Set the scene to the current stage
+                Stage stage = (Stage) nextButton.getScene().getWindow();
+                stage.setScene(scene);
+            } catch (IOException ex) {
+                ex.printStackTrace(); // Handle the exception properly
+            }
+        });
 
         Button deleteButton = new Button("Delete" );
-//        deleteButton.setOnAction(event -> {
-////            PostManager.deletePost(post.getPostID());
-//        });
+        deleteButton.setOnAction(e -> {
+            int postId = post.getId();
+            sqLitePostDOA.deletePost(postId);
+            Stage stage = (Stage) nextButton.getScene().getWindow();
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("Profile_UI.fxml"));
+            Scene scene = null;
+            try {
+                scene = new Scene(fxmlLoader.load(), HelloApplication.WIDTH, HelloApplication.HEIGHT);
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
+            stage.setScene(scene);
+        });
         controlBox.getChildren().addAll(editButton, deleteButton);
 
 
@@ -145,11 +187,6 @@ public class ProfileController {
 
         return postBox;
     }
-//    private void onDelete() {
-//        // Get the selected contact from the list view
-//        Post selectedPost = contactsListView.getSelectionModel().getSelectedItem();
-//        if (selectedPost != null) {
-//            PostManager.deletePost(selectedPost);
-//        }
+
 
 }

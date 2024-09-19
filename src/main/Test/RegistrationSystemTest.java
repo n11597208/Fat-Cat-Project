@@ -16,10 +16,8 @@ public class RegistrationSystemTest {
 
     @BeforeEach
     public void setUp() throws SQLException {
-        // Create an in-memory database
-        connection = SqliteConnection.connect(); // Ensure this connects to an in-memory database
+        connection = SqliteConnection.connect();
 
-        // Create the 'users' table for testing
         try (PreparedStatement statement = connection.prepareStatement(
                 "CREATE TABLE IF NOT EXISTS users (" +
                         "id INTEGER PRIMARY KEY AUTOINCREMENT," +
@@ -39,10 +37,8 @@ public class RegistrationSystemTest {
 
     @Test
     public void testAddUser_Success() throws SQLException {
-        // Add a user
         registrationSystem.addUser("John", "Doe", "john.doe@example.com", "johndoe", "password");
 
-        // Verify the user was added
         try (PreparedStatement statement = connection.prepareStatement("SELECT * FROM users WHERE userName = ?")) {
             statement.setString(1, "johndoe");
             ResultSet resultSet = statement.executeQuery();
@@ -60,13 +56,11 @@ public class RegistrationSystemTest {
 
     @Test
     public void testAddUser_DuplicateEmail() throws SQLException {
-        // Add a user
+
         registrationSystem.addUser("John", "Doe", "john.doe@example.com", "johndoe", "password");
 
-        // Try to add another user with the same email
         registrationSystem.addUser("Jane", "Doe", "john.doe@example.com", "janedoe", "password");
 
-        // Verify the first user still exists and the second one was not added
         try (PreparedStatement statement = connection.prepareStatement("SELECT COUNT(*) FROM users WHERE email = ?")) {
             statement.setString(1, "john.doe@example.com");
             ResultSet resultSet = statement.executeQuery();

@@ -24,7 +24,6 @@ public class LoginController {
 
     private LoginSystem loginSystem = new LoginSystem();
 
-    // Handle login button
     @FXML
     public void HandleLoginAction() {
         String username = UsernameField.getText();
