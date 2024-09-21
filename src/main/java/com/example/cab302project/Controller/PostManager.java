@@ -1,6 +1,9 @@
-package com.example.cab302project;
+package com.example.cab302project.Controller;
 
-import static com.example.cab302project.LoginController.Session.getLoggedInUser;
+import com.example.cab302project.Model.Post;
+import com.example.cab302project.Model.SQLitePostDOA;
+
+import static com.example.cab302project.Controller.LoginController.Session.getLoggedInUser;
 
 public class PostManager {
     private static SQLitePostDOA postDAO;
