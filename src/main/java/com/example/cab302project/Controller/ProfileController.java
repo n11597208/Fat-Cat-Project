@@ -4,6 +4,7 @@ import com.example.cab302project.HelloApplication;
 import com.example.cab302project.Model.Post;
 import com.example.cab302project.Model.SQLitePostDOA;
 import com.example.cab302project.Model.SQLiteUserDOA;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
@@ -12,6 +13,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
@@ -27,6 +29,7 @@ import java.util.List;
 
 public class ProfileController {
 
+    public MenuItem logout;
     @FXML
     private VBox postsContainer;
 
@@ -86,6 +89,15 @@ public class ProfileController {
             VBox postBox = createPostBox(post);
             postsContainer.getChildren().add(postBox);
         }
+    }
+    @FXML
+    public void logOut() throws IOException {
+        LoginController.Session.clearSession();
+        Stage window = (Stage) nextButton.getScene().getWindow();
+        FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("Login_UI.fxml"));
+        Parent root = fxmlLoader.load();
+        Scene scene = new Scene(root, HelloApplication.WIDTH, HelloApplication.HEIGHT);
+        window.setScene(scene);
     }
     //redirects user to the post creation page
     @FXML
@@ -169,4 +181,6 @@ public class ProfileController {
         postBox.getChildren().addAll(postImageView, postTitle, postDescription, detailsBox, controlBox);
         return postBox;
     }
+
+
 }

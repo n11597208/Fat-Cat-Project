@@ -46,7 +46,7 @@
                     </graphic>
                     <MenuItem text="View Profile"/>
                     <MenuItem text="Settings"/>
-                    <MenuItem text="Logout"/>
+                    <MenuItem fx:id="logout" onAction="#logOut" text="Logout"/>
                 </Menu>
             </MenuBar>
         </HBox>
