@@ -1,4 +1,4 @@
-package com.example.cab302project;
+package com.example.cab302project.Model;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -21,7 +21,7 @@ public class SQLitePostDOA {
             e.printStackTrace();
         }
     }
-
+// Method to create posts table in database with all of the relevant fields and their data types
     public void createTable() {
         try {
             Statement statement = connection.createStatement();
@@ -44,57 +44,62 @@ public class SQLitePostDOA {
             e.printStackTrace();
         }
     }
-
+// Method to add new post. Takes a post and username of poster as parameters and inserts post details with the post author in the posts table
     public void addPost(Post post, String userName) {
         try {
             PreparedStatement statement = connection.prepareStatement(
                     "INSERT INTO posts (userId, postTitle, postDescription, carMake, carModel, postLocation, postImage, rating, numberOfComments, numberOfShares) VALUES (?, ?, ?, ?, ?, ?, ?,?,?,?)",
                     Statement.RETURN_GENERATED_KEYS
             );
-            statement.setString(1, userName);
-            statement.setString(2, post.getTitle());
-            statement.setString(3, post.getDescription());
-            statement.setString(4, post.getMake());
-            statement.setString(5, post.getModel());
-            statement.setString(6, post.getLocation());
-            statement.setBytes(7, post.getPostImage());
-            statement.setInt(8, 0);
-            statement.setInt(9, 0);
-            statement.setInt(10, 0);
-            statement.executeUpdate();
-
-            ResultSet generatedKeys = statement.getGeneratedKeys();
-            if (generatedKeys.next()) {
-                post.setId(generatedKeys.getInt(1));
+            if (post.getTitle() == "" || post.getDescription() == "" || post.getMake() == "" || post.getModel() == "" || post.getLocation() == "") {
+                return;
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+            else {
+                statement.setString(1, userName);
+                statement.setString(2, post.getTitle());
+                statement.setString(3, post.getDescription());
+                statement.setString(4, post.getMake());
+                statement.setString(5, post.getModel());
+                statement.setString(6, post.getLocation());
+                statement.setBytes(7, post.getPostImage());
+                statement.setInt(8, 0);
+                statement.setInt(9, 0);
+                statement.setInt(10, 0);
+                statement.executeUpdate();
+                ResultSet generatedKeys = statement.getGeneratedKeys();
+                if (generatedKeys.next()) {
+                    post.setId(generatedKeys.getInt(1));
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
     }
 //    @Override
+    //Takes user inputs and updates post field where post id is the current post the user is interacting in
 public void updatePost(Post post, int postId) throws SQLException {
     String sql = "UPDATE posts SET postTitle = ?, postDescription = ?, carMake = ?, carModel = ?, postLocation = ? WHERE id = ?";
+    if (post.getTitle() == "" || post.getDescription() == "" || post.getMake() == "" || post.getModel() == "" || post.getLocation() == "") {
+        return;
+    }
+    else {
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, post.getTitle());
+            statement.setString(2, post.getDescription());
+            statement.setString(3, post.getMake());
+            statement.setString(4, post.getModel());
+            statement.setString(5, post.getLocation());
+            statement.setInt(6, postId);
+            statement.executeUpdate();
 
-    // Use try-with-resources for automatic resource management
-    try (PreparedStatement statement = connection.prepareStatement(sql)) {
-        // Set parameters in the prepared statement
-        statement.setString(1, post.getTitle());
-        statement.setString(2, post.getDescription());
-        statement.setString(3, post.getMake());
-        statement.setString(4, post.getModel());
-        statement.setString(5, post.getLocation());
-        statement.setInt(6, postId);
-
-        // Execute the update
-        statement.executeUpdate();
-
-    } catch (SQLException e) {
-        e.printStackTrace(); // Log the exception
-        throw e; // Optionally rethrow the exception if needed
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw e;
+        }
     }
 }
 
-
+// Deletes the field in the post field that the user is currently interacting with
 //    @Override
     public void deletePost(Integer postId) {
         try {
@@ -105,6 +110,7 @@ public void updatePost(Post post, int postId) throws SQLException {
             e.printStackTrace();
         }
     }
+    //gets the number of posts that a user has created requires the users username
     public int getNumPosts(String userName) throws SQLException {
         int numPosts = 0;
         PreparedStatement statement = connection.prepareStatement("SELECT COUNT(*) FROM posts WHERE userID = ?");
@@ -117,8 +123,8 @@ public void updatePost(Post post, int postId) throws SQLException {
         statement.close();
         return numPosts;
     }
-
-    public static Post getPost(int id) {
+//returns all of the post information for a specified post id
+public static Post getPost(int id) {
         String sql = "SELECT * FROM posts WHERE id = ?";
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setInt(1, id);
@@ -146,7 +152,7 @@ public void updatePost(Post post, int postId) throws SQLException {
         }
         return null;
     }
-
+// returns a list of all of the posts created by a user
     public static List<Post> getPostsByAuthor(String author) {
         List<Post> posts = new ArrayList<>();
 

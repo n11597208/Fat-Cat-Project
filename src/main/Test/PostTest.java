@@ -1,5 +1,4 @@
-import com.example.cab302project.Post;
-import org.junit.jupiter.api.BeforeEach;
+import com.example.cab302project.Model.Post;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;

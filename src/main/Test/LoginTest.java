@@ -1,5 +1,5 @@
-import com.example.cab302project.LoginSystem;
-import com.example.cab302project.SqliteConnection;
+import com.example.cab302project.Model.LoginSystem;
+import com.example.cab302project.Model.SqliteConnection;
 import org.junit.jupiter.api.*;
 import static org.junit.jupiter.api.Assertions.*;
 

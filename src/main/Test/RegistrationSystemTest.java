@@ -4,8 +4,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import com.example.cab302project.RegistrationSystem;
-import com.example.cab302project.SqliteConnection;
+import com.example.cab302project.Model.RegistrationSystem;
+import com.example.cab302project.Model.SqliteConnection;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -17,6 +17,7 @@ public class RegistrationSystemTest {
     @BeforeEach
     public void setUp() throws SQLException {
         connection = SqliteConnection.connect();
+        registrationSystem = new RegistrationSystem();
 
         try (PreparedStatement statement = connection.prepareStatement(
                 "CREATE TABLE IF NOT EXISTS users (" +
@@ -31,8 +32,6 @@ public class RegistrationSystemTest {
                         ")")) {
             statement.execute();
         }
-
-        registrationSystem = new RegistrationSystem();
     }
 
     @Test
@@ -41,16 +40,28 @@ public class RegistrationSystemTest {
 
         try (PreparedStatement statement = connection.prepareStatement("SELECT * FROM users WHERE userName = ?")) {
             statement.setString(1, "johndoe");
-            ResultSet resultSet = statement.executeQuery();
+            try (ResultSet resultSet = statement.executeQuery()) {
+                assertTrue(resultSet.next(), "User should be found in the database");
+                assertEquals("John", resultSet.getString("firstName"));
+                assertEquals("Doe", resultSet.getString("lastName"));
+                assertEquals("john.doe@example.com", resultSet.getString("email"));
+                assertEquals("johndoe", resultSet.getString("userName"));
+                assertEquals("password", resultSet.getString("password"));
+                assertEquals(0, resultSet.getInt("followers"));
+                assertEquals(0, resultSet.getInt("numberOfPosts"));
+            }
+        }
+    }
 
-            assertTrue(resultSet.next(), "User should be found in the database");
-            assertEquals("John", resultSet.getString("firstName"));
-            assertEquals("Doe", resultSet.getString("lastName"));
-            assertEquals("john.doe@example.com", resultSet.getString("email"));
-            assertEquals("johndoe", resultSet.getString("userName"));
-            assertEquals("password", resultSet.getString("password"));
-            assertEquals(0, resultSet.getInt("followers"));
-            assertEquals(0, resultSet.getInt("numberOfPosts"));
+    @Test
+    public void testAddUser_Empty() throws SQLException {
+        registrationSystem.addUser("", "", "", "", "");
+
+        try (PreparedStatement statement = connection.prepareStatement("SELECT * FROM users WHERE userName = ?")) {
+            statement.setString(1, "");
+            try (ResultSet resultSet = statement.executeQuery()) {
+                assertFalse(resultSet.next(), "Empty post should not be added to the database");
+            }
         }
     }
 
@@ -63,10 +74,11 @@ public class RegistrationSystemTest {
 
         try (PreparedStatement statement = connection.prepareStatement("SELECT COUNT(*) FROM users WHERE email = ?")) {
             statement.setString(1, "john.doe@example.com");
-            ResultSet resultSet = statement.executeQuery();
-            resultSet.next();
-            int count = resultSet.getInt(1);
-            assertEquals(1, count, "Email should be unique.");
+            try (ResultSet resultSet = statement.executeQuery()) {
+                resultSet.next();
+                int count = resultSet.getInt(1);
+                assertEquals(1, count, "Email should be unique.");
+            }
         }
     }
 }

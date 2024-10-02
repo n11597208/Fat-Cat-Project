@@ -8,4 +8,8 @@ module com.example.cab302project {
 
     opens com.example.cab302project to javafx.fxml;
     exports com.example.cab302project;
+    exports com.example.cab302project.Model;
+    opens com.example.cab302project.Model to javafx.fxml;
+    exports com.example.cab302project.Controller;
+    opens com.example.cab302project.Controller to javafx.fxml;
 }

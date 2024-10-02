@@ -1,6 +1,7 @@
-package com.example.cab302project;
+package com.example.cab302project.Model;
 
 public class Post {
+    // All post attributes
     private int id;
     private String title;
     private String description;
@@ -13,6 +14,7 @@ public class Post {
     private Integer numComments;
     private Integer numshares;
 
+    //  Constructor to initialize a Post object with the provided parameters. Sets the initial rating, number of comments, and number of shares to zero.
     public Post(String title, String description, String author, String model, String make, String location, byte[] image, Integer rating, Integer numComments, Integer numshares) {
         this.title = title;
         this.description = description;
@@ -25,6 +27,7 @@ public class Post {
         this.numComments = 0;
         this.numshares = 0;
     }
+    // Getter and setter methods for each field
 
     public int getId() {
         return id;
@@ -97,15 +100,19 @@ public class Post {
     public void setRating(Integer rating) {
         this.rating = rating;
     }
+
     public Integer getNumComments() {
         return numComments;
     }
+
     public void setNumComments(Integer numComments) {
         this.numComments = numComments;
     }
+
     public Integer getNumshares() {
         return numshares;
     }
+
     public void setNumshares(Integer numshares) {
         this.numshares = numshares;
     }

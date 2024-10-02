@@ -1,5 +1,7 @@
-package com.example.cab302project;
+package com.example.cab302project.Controller;
 
+import com.example.cab302project.HelloApplication;
+import com.example.cab302project.Model.RegistrationSystem;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -8,16 +10,20 @@ import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Label;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.event.ActionEvent;
 import javafx.stage.Stage;
 
+import javax.swing.*;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 
 public class RegisterController {
-
+    private String filename = null;
+    private int s = 0;
+    private byte[] profile_image = null;
     @FXML
     private ImageView logoImageView;
 
@@ -54,30 +60,33 @@ public class RegisterController {
     @FXML
 
     private RegistrationSystem registrationSystem = new RegistrationSystem();
-
+// checks if fileds entered are valid, if they are create new user and redirect to login page, otherwise display error message
     public void registerButtonOnAction(ActionEvent event) throws IOException {
-        if (validateInputs()) {
+        if (validateInputs() && !registrationSystem.duplicateUser(emailTextField.getText())) {
             if (setpasswordField.getText().equals(confirmPasswordField.getText())) {
                 registrationMessageLabel.setText("Registration successful!");
                 confirmPasswordLabel.setText("Passwords match.");
                 registerUser();
+                Stage window = (Stage) closeButton.getScene().getWindow();
+                FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("Login_UI.fxml"));
+                Parent root = fxmlLoader.load();
+                Scene scene = new Scene(root, HelloApplication.WIDTH, HelloApplication.HEIGHT);
+                window.setScene(scene);
             } else {
                 confirmPasswordLabel.setText("Passwords does not match.");
             }
         }
-        Stage stage = (Stage) closeButton.getScene().getWindow();
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("Login_UI.fxml"));
-        Scene scene = new Scene(fxmlLoader.load(), HelloApplication.WIDTH, HelloApplication.HEIGHT);
-        stage.setScene(scene);
-    }
 
+    }
+//redirects the user to the login page
     public void closeButtonOnAction(ActionEvent event) throws IOException {
-        Stage stage = (Stage) closeButton.getScene().getWindow();
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("Login_UI.fxml"));
-        Scene scene = new Scene(fxmlLoader.load(), HelloApplication.WIDTH, HelloApplication.HEIGHT);
-        stage.setScene(scene);
+        Stage window = (Stage) closeButton.getScene().getWindow();
+        FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("Login_UI.fxml"));
+        Parent root = fxmlLoader.load();
+        Scene scene = new Scene(root, HelloApplication.WIDTH, HelloApplication.HEIGHT);
+        window.setScene(scene);
     }
-
+// ensures that user inputs are not null
     private boolean validateInputs() {
         if (firstnameTextField.getText().isEmpty() || lastnameTextField.getText().isEmpty() ||
                 emailTextField.getText().isEmpty() || usernameTextField.getText().isEmpty() ||
@@ -87,14 +96,34 @@ public class RegisterController {
         }
         return true;
     }
-
+// gets currently entered data from text fields and calls the addUser method
     private void registerUser() {
         String firstName = firstnameTextField.getText();
         String lastName = lastnameTextField.getText();
         String email = emailTextField.getText();
         String username = usernameTextField.getText();
         String password = setpasswordField.getText();
-        registrationSystem.addUser(firstName, lastName, email, username, password);
-//        statusLabel.setText("User registered successfully.");
+        byte[] profilePicture = profile_image;
+        registrationSystem.addUser(firstName, lastName, email, username, password, profilePicture);
+    }
+    public void handleUploadFile(ActionEvent actionEvent) {
+        JFileChooser chooser = new JFileChooser();
+        chooser.showOpenDialog(null);
+        File file = chooser.getSelectedFile();
+        if (file != null) {
+            filename = file.getAbsolutePath();
+            try {
+                FileInputStream fis = new FileInputStream(file);
+                ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                byte[] buf = new byte[1024];
+                int readNum;
+                while ((readNum = fis.read(buf)) != -1) {
+                    bos.write(buf, 0, readNum);
+                }
+                profile_image = bos.toByteArray();
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(null, e);
+            }
+        }
     }
 }

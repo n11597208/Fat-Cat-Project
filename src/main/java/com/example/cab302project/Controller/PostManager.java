@@ -1,8 +1,11 @@
-package com.example.cab302project;
+package com.example.cab302project.Controller;
+
+import com.example.cab302project.Model.Post;
+import com.example.cab302project.Model.SQLitePostDOA;
 
 import java.sql.SQLException;
 
-import static com.example.cab302project.LoginController.Session.getLoggedInUser;
+import static com.example.cab302project.Controller.LoginController.Session.getLoggedInUser;
 
 public class PostManager {
     private static SQLitePostDOA postDAO;

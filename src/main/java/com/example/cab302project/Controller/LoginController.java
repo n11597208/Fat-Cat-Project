@@ -1,5 +1,9 @@
-package com.example.cab302project;
+package com.example.cab302project.Controller;
 
+import com.example.cab302project.HelloApplication;
+import com.example.cab302project.Model.LoginSystem;
+import com.example.cab302project.Model.SQLitePostDOA;
+import com.example.cab302project.Model.SqliteConnection;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -28,28 +32,16 @@ public class LoginController {
     public void HandleLoginAction() {
         String username = UsernameField.getText();
         String password = PasswordField.getText();
-
         if (loginSystem.checkLogin(username, password)) {
             LoginStatus.setText("Login successful!");
             Session.setLoggedInUser(username);
-
             try {
-
                 Stage window = (Stage) UsernameField.getScene().getWindow();
-
-
                 FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("Profile_UI.fxml"));
                 Parent root = fxmlLoader.load();
-
-
                 Scene scene = new Scene(root, HelloApplication.WIDTH, HelloApplication.HEIGHT);
-
-
                 window.setScene(scene);
-
-
                 window.show();
-
             } catch (IOException e) {
                 e.printStackTrace();
             }

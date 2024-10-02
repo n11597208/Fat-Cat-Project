@@ -1,13 +1,16 @@
-package com.example.cab302project;
+package com.example.cab302project.Controller;
 
+import com.example.cab302project.HelloApplication;
+import com.example.cab302project.Model.Post;
+import com.example.cab302project.Model.SQLitePostDOA;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
-import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import javax.swing.*;
@@ -16,7 +19,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 
-import static com.example.cab302project.LoginController.Session.getLoggedInUser;
+import static com.example.cab302project.Controller.LoginController.Session.getLoggedInUser;
 
 public class CreatePostController {
 
@@ -53,6 +56,7 @@ public class CreatePostController {
     public void initialize() {
         uploadButton.setOnAction(this::handleUploadFile);
     }
+    //Method to allow user to uplad image file. This method also converts the file to bytes so that it can be stored as a BLOB in the database
 
     @FXML
     public void handleUploadFile(ActionEvent actionEvent) {
@@ -60,7 +64,7 @@ public class CreatePostController {
         chooser.showOpenDialog(null);
         File file = chooser.getSelectedFile();
         if (file != null) {
-            filename = file.getAbsolutePath(); // Now filename is global and accessible anywhere in the class
+            filename = file.getAbsolutePath();
             try {
                 FileInputStream fis = new FileInputStream(file);
                 ByteArrayOutputStream bos = new ByteArrayOutputStream();
@@ -75,6 +79,7 @@ public class CreatePostController {
             }
         }
     }
+    //resets all post attributes and redirects the user to the profiles page
 
     public void onCancelButtonClick(ActionEvent actionEvent) throws IOException {
         PostTitleField.clear();
@@ -87,7 +92,7 @@ public class CreatePostController {
         Scene scene = new Scene(fxmlLoader.load(), HelloApplication.WIDTH, HelloApplication.HEIGHT);
         stage.setScene(scene);
     }
-
+// Sets post attributes to values entered by the user in the text fields and redirects user to the profile page
     public void onPostButtonClick(ActionEvent actionEvent) throws IOException {
         String postTitle = PostTitleField.getText();
         String postDescription = PostDescriptionField.getText();
@@ -95,18 +100,20 @@ public class CreatePostController {
         String carModel = CarModelField.getText();
         String location = LocationField.getText();
         byte[] image = post_image;
-
-
         String userName = getLoggedInUser();
-
+        if ( postTitle == "" || postDescription == "" || carModel == "" || location == "" || carMake == "") {
+            return;
+        }
+        else {
         Post newPost = new Post(postTitle, postDescription, "author", carModel, carMake, location, image, 0, 0, 0);
-
         SQLitePostDOA postDAO = new SQLitePostDOA();
         postDAO.addPost(newPost, userName);
-        Stage stage = (Stage) postButton.getScene().getWindow();
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("Profile_UI.fxml"));
-        Scene scene = new Scene(fxmlLoader.load(), HelloApplication.WIDTH, HelloApplication.HEIGHT);
-        stage.setScene(scene);
+        Stage window = (Stage) postButton.getScene().getWindow();
+        FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("Profile_UI.fxml"));
+        Parent root = fxmlLoader.load();
+        Scene scene = new Scene(root, HelloApplication.WIDTH, HelloApplication.HEIGHT);
+        window.setScene(scene);
+        }
     }
 
     private void onAdd() {

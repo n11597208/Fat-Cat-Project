@@ -14,7 +14,7 @@
 <?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.text.Font?>
 
-<VBox alignment="CENTER" spacing="20.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.cab302project.RegisterController">
+<VBox alignment="CENTER" spacing="20.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.cab302project.Controller.RegisterController">
     <padding>
         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
     </padding>
@@ -49,6 +49,7 @@
     <TextField fx:id="usernameTextField" promptText="Username" />
     <PasswordField fx:id="setpasswordField" promptText="Password" />
     <PasswordField fx:id="confirmPasswordField" promptText="Confirm Password" />
+    <Button fx:id="uploadButton" text="Upload Profile Picture" onAction="#handleUploadFile" />
 
     <Button fx:id="registerButton" onAction="#registerButtonOnAction" style="-fx-background-color: #128aff; -fx-pref-width: 200;" text="Register" textAlignment="CENTER" textFill="WHITE">
         <font>

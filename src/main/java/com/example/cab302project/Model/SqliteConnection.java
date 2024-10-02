@@ -1,4 +1,4 @@
-package com.example.cab302project;
+package com.example.cab302project.Model;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -33,7 +33,8 @@ public class SqliteConnection {
                         username TEXT NOT NULL UNIQUE,
                         password TEXT NOT NULL,                                            
                         followers INTEGER NOT NULL,
-                        numberOfPosts INTEGER NOT NULL
+                        numberOfPosts INTEGER NOT NULL,
+                        profilePicture BLOB NULL
                     );
                 """;
 
