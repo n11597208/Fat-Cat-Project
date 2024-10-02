@@ -1,0 +1,31 @@
+.menu-bar {
+    -fx-background-color: #000000;   /* Set background to black */
+    -fx-font-size: 18px;             /* Increase font size */
+    -fx-padding: 5px;                /* Adjust padding to control height */
+    -fx-min-height: 60px;            /* Set minimum height to match image */
+}
+
+.menu {
+    -fx-text-fill: white;            /* This applies the text color inside the menus */
+}
+
+.menu-item {
+    -fx-text-fill: black;            /* Ensures the text color for menu items is white */
+    -fx-padding: 5px 10px;           /* Add padding around the text */
+}
+
+.menu:hover {
+    -fx-background-color: #333333;   /* Set background color on hover */
+}
+
+.menu-item:hover {
+    -fx-background-color: #555555;   /* Set background color on hover for items */
+}
+
+.menu .label {
+    -fx-text-fill: white;            /* Set text color for the menu label */
+}
+
+.menu-item .label {
+    -fx-text-fill: black;            /* Set text color for the menu item label */
+}

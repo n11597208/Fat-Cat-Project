@@ -17,7 +17,7 @@
 <?import javafx.scene.shape.Circle?>
 
 <BorderPane xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="com.example.cab302project.Controller.ProfileController" stylesheets="@navbar.css">
+            fx:controller="com.example.cab302project.Controller.ProfileController" stylesheets="@navbas.css">
 
     <!-- Top MenuBar -->
     <top>
