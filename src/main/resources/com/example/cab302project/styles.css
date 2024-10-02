@@ -1,0 +1,17 @@
+.label {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
+
+.text-field {
+    -fx-font-size: 14px;
+    -fx-padding: 5px;
+    -fx-border-color: #ccc;
+    -fx-border-radius: 5px;
+    -fx-background-color: #f9f9f9;
+}
+
+.text-field:focused {
+    -fx-border-color: #66afe9;
+    -fx-background-color: #fff;
+}
