@@ -1,5 +1,7 @@
 package com.example.cab302project.Model;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.scene.image.Image;
 
 import java.io.InputStream;
@@ -63,7 +65,24 @@ public class SQLiteUserDOA {
         }
 
 
+
+
         return null; // Returns null if not found
+    }
+    public ObservableList<String> getAllUsers(String username) {
+    String sql = "SELECT username FROM users WHERE username != ?";
+    ObservableList userList = FXCollections.observableArrayList();
+    try (PreparedStatement statement = connection.prepareStatement(sql)) {
+        statement.setString(1, username);
+        try (ResultSet resultSet = statement.executeQuery()) {
+            if (resultSet.next()) {
+                userList.add(resultSet.getString("username"));
+            }
+        }
+    } catch (SQLException e) {
+        throw new RuntimeException(e);
+    }
+    return userList;
     }
 }
 

@@ -26,7 +26,6 @@ import java.sql.SQLException;
 import java.util.List;
 
 
-
 public class HomeController {
     public Button search;
     public ImageView profileImageView;
@@ -35,14 +34,23 @@ public class HomeController {
 
     @FXML
     private ListView<String> accountListView;
-
-    private ObservableList<String> accounts = FXCollections.observableArrayList("Account1", "Account2", "Account3", "Account4");
     SQLiteUserDOA sqLiteUserDOA = new SQLiteUserDOA();
+
+    private ObservableList<String> accounts = sqLiteUserDOA.getAllUsers(LoginController.Session.getLoggedInUser());
+    private ObservableList<String> noSearch = FXCollections.observableArrayList();
+
+
     public void initialize() throws SQLException {
-        accountListView.setItems(accounts);
+        accountListView.setItems(noSearch);
         accountSearchField.textProperty().addListener((observable, oldValue, newValue) -> {
-                    accountListView.setItems(accounts.filtered(account -> account.toLowerCase().contains(newValue.toLowerCase())));
-                });
+            if (newValue.isEmpty()) {
+                // Display noSearch, which is an empty list, when search field is empty
+                accountListView.setItems(noSearch);
+            } else {
+                // Filter based on search term
+                accountListView.setItems(accounts.filtered(account -> account.toLowerCase().contains(newValue.toLowerCase())));
+            }
+        });
         LoginController.Session session = new LoginController.Session();
         Image image = sqLiteUserDOA.getProfilePicture(session.getLoggedInUser());
         if (image != null) {
@@ -58,6 +66,7 @@ public class HomeController {
         Scene scene = new Scene(root, HelloApplication.WIDTH, HelloApplication.HEIGHT);
         window.setScene(scene);
     }
+
     @FXML
     public void logOut() throws IOException {
         LoginController.Session.clearSession();
@@ -68,6 +77,7 @@ public class HomeController {
         window.setScene(scene);
 
     }
+
     //redirects user to the post creation page
     @FXML
     protected void onNextButtonClick() throws IOException {
