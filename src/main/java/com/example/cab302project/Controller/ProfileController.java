@@ -204,7 +204,11 @@ public class ProfileController {
     }
 
 
-    public void HomeButton(ActionEvent actionEvent) {
-
+    public void HomeButton(ActionEvent actionEvent) throws IOException {
+        Stage window = (Stage) followButton.getScene().getWindow();
+        FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("Home_UI.fxml"));
+        Parent root = fxmlLoader.load();
+        Scene scene = new Scene(root, HelloApplication.WIDTH, HelloApplication.HEIGHT);
+        window.setScene(scene);
     }
 }
