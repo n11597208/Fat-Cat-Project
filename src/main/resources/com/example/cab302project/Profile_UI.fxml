@@ -16,8 +16,9 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.Circle?>
 
+<?import javafx.scene.text.Text?>
 <BorderPane xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="com.example.cab302project.Controller.ProfileController" stylesheets="@navbas.css">
+            fx:controller="com.example.cab302project.Controller.ProfileController" stylesheets="@navbas.css" style="-fx-background-color: white;">
 
     <!-- Top MenuBar -->
     <top>
@@ -32,12 +33,14 @@
                             </image>
                         </ImageView>
                     </graphic>
+                    <MenuItem text="Home" onAction="#HomeButton"/>
                 </Menu>
             </MenuBar>
 
-           <!-- Right MenuBar -->
+            <!-- Right MenuBar -->
             <MenuBar HBox.hgrow="NEVER">
                 <Menu text="+ Add Post">
+                    <MenuItem text="Create Post" onAction="#onNextButtonClick"/>
                 </Menu>
 
                 <Menu>
@@ -55,55 +58,51 @@
 
     <!-- Center content -->
     <center>
-        <VBox alignment="CENTER" spacing="20.0">
-            <StackPane>
-                <ImageView fitHeight="150.0" fitWidth="640.0" pickOnBounds="true" preserveRatio="false">
-                    <image>
-                        <Image url="@../../../Image_assets/banner.jpeg"/>
-                    </image>
-                </ImageView>
-                <ImageView fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true">
-                    <image>
-                        <Image url="@../../../Image_assets/profile_picture.jpg"/>
-                    </image>
-                    <clip>
-                        <Circle centerX="50" centerY="50" radius="50"/>
-                    </clip>
-                </ImageView>
-            </StackPane>
+        <HBox spacing="10" alignment="CENTER">
+            <!-- Section taking 25% -->
+            <VBox fx:id="leftSection" HBox.hgrow="ALWAYS" maxWidth="Infinity" alignment="TOP_CENTER" spacing="15">
+                <ImageView fx:id="profileImageView2" fitHeight="100.0" fitWidth="100.0"/>
+                <Label fx:id="welcomeText1" text="Username" style="-fx-font-size: 24px; -fx-font-weight: bold;" alignment="CENTER"/>
 
-            <Label fx:id="welcomeText1" text="Username" style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
+                <HBox fillHeight="false" prefHeight="30.0" prefWidth="500.0" alignment="CENTER">
+                    <children>
+                        <Label fx:id="welcomeText2" text="Followers" style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
+                        <Region fx:id="spacer"/>
+                        <Label fx:id="welcomeText3" text="Posts" style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
+                    </children>
+                </HBox>
 
-            <HBox fillHeight="false" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="30.0" prefWidth="500.0"
-                  alignment="CENTER">
-                <children>
-                    <Label fx:id="welcomeText2" text="Followers" style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
-                    <Region fx:id="spacer"/>
-                    <Label fx:id="welcomeText3" text="  Posts" style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
-                </children>
-            </HBox>
+                <HBox fillHeight="false" prefHeight="30.0" prefWidth="500.0" alignment="CENTER">
+                    <children>
+                        <Label fx:id="welcomeText4" text="0" style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
+                        <Region fx:id="spacer2"/>
+                        <Label fx:id="welcomeText5" text="1" style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
+                    </children>
+                </HBox>
+                <Text fx:id="descriptionText" wrappingWidth="200" text="No Description"/>
 
-            <HBox fillHeight="false" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="30.0" prefWidth="500.0"
-                  alignment="CENTER">
-                <children>
-                    <Label fx:id="welcomeText4" text="  100" style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
-                    <Region fx:id="spacer2"/>
-                    <Label fx:id="welcomeText5" text="10" style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
-                </children>
-            </HBox>
+                <Button fx:id="followButton" style="-fx-background-color: #128aff; -fx-pref-width: 200;" text="Follow" textAlignment="CENTER" textFill="WHITE"/>
+            </VBox>
 
-            <Label fx:id="Post" text="Post" style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
 
-            <ScrollPane fitToWidth="true" fitToHeight="true">
-                <content>
-                    <VBox fx:id="postsContainer" alignment="CENTER" spacing="20.0">
-                    </VBox>
-                </content>
-            </ScrollPane>
+            <VBox fx:id="rightSection" HBox.hgrow="ALWAYS" maxWidth="Infinity">
 
-            <Button fx:id="nextButton" text="Create Post" onAction="#onNextButtonClick"/>
 
-        </VBox>
+                <Label fx:id="Post" text="Post" style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
+
+                <ScrollPane fitToWidth="true" fitToHeight="true">
+                    <content>
+                        <VBox fx:id="postsContainer" alignment="CENTER" spacing="20.0">
+                        </VBox>
+                    </content>
+                </ScrollPane>
+
+
+
+            </VBox>
+        </HBox>
+
+
     </center>
 
 </BorderPane>

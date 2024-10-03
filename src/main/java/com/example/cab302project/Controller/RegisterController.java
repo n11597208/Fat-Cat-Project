@@ -21,6 +21,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 
 public class RegisterController {
+    public TextField descriptionTextField;
     private String filename = null;
     private int s = 0;
     private byte[] profile_image = null;
@@ -104,7 +105,8 @@ public class RegisterController {
         String username = usernameTextField.getText();
         String password = setpasswordField.getText();
         byte[] profilePicture = profile_image;
-        registrationSystem.addUser(firstName, lastName, email, username, password, profilePicture);
+        String description = descriptionTextField.getText();
+        registrationSystem.addUser(firstName, lastName, email, username, password, profilePicture, description);
     }
     public void handleUploadFile(ActionEvent actionEvent) {
         JFileChooser chooser = new JFileChooser();

@@ -8,8 +8,8 @@ import java.sql.SQLException;
 
 public class RegistrationSystem {
 
-    public void addUser(String firstName, String lastName, String email, String userName, String password, byte[] profilePicture) {
-        String sql = "INSERT INTO users (firstName, lastName, email, userName, password, profilePicture, followers, numberOfPosts) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+    public void addUser(String firstName, String lastName, String email, String userName, String password, byte[] profilePicture, String description) {
+        String sql = "INSERT INTO users (firstName, lastName, email, userName, password, profilePicture, followers, numberOfPosts, description) VALUES (?, ?, ?, ?, ?, ?, ?, ?,?)";
         if (firstName == "" || lastName == "" || email == "" || userName == "" || password == "" || duplicateUser(email)) {
             return;
         } else {
@@ -24,6 +24,7 @@ public class RegistrationSystem {
                 statement.setBytes(6, profilePicture);
                 statement.setInt(7, 0);
                 statement.setInt(8, 0);
+                statement.setString(9, description);
                 statement.executeUpdate();
             } catch (SQLException e) {
                 System.out.println(e.getMessage());

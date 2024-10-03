@@ -34,14 +34,15 @@ public class SqliteConnection {
                         password TEXT NOT NULL,                                            
                         followers INTEGER NOT NULL,
                         numberOfPosts INTEGER NOT NULL,
-                        profilePicture BLOB NULL
+                        profilePicture BLOB NULL,
+                        description TEXT NULL
                     );
                 """;
 
 
         // SQLite to insert a sample user
         String insertSampleUserSQL = """
-                    INSERT OR IGNORE INTO users (username, password, followers, numberOfPosts, firstName, lastName, email) VALUES ('admin', '1234', 0,0, 'John', 'Doe', 'John.Doe@gmail.com');
+                    INSERT OR IGNORE INTO users (username, password, followers, numberOfPosts, firstName, lastName, email, description) VALUES ('admin', '1234', 0,0, 'John', 'Doe', 'John.Doe@gmail.com', 'This is my new RateMyRide Page';
                 """;
 
         try (Connection conn = connect(); Statement stmt = conn.createStatement()) {

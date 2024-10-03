@@ -47,8 +47,10 @@
     <TextField fx:id="lastnameTextField" promptText="Last Name" />
     <TextField fx:id="emailTextField" promptText="Email" />
     <TextField fx:id="usernameTextField" promptText="Username" />
+    <TextField fx:id="descriptionTextField" promptText="Enter Profile Description" />
     <PasswordField fx:id="setpasswordField" promptText="Password" />
     <PasswordField fx:id="confirmPasswordField" promptText="Confirm Password" />
+
     <Button fx:id="uploadButton" text="Upload Profile Picture" onAction="#handleUploadFile" />
 
     <Button fx:id="registerButton" onAction="#registerButtonOnAction" style="-fx-background-color: #128aff; -fx-pref-width: 200;" text="Register" textAlignment="CENTER" textFill="WHITE">

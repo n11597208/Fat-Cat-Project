@@ -4,6 +4,7 @@ import com.example.cab302project.HelloApplication;
 import com.example.cab302project.Model.Post;
 import com.example.cab302project.Model.SQLitePostDOA;
 import com.example.cab302project.Model.SQLiteUserDOA;
+import com.example.cab302project.Model.User;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -20,6 +21,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 import java.io.ByteArrayInputStream;
@@ -30,6 +32,8 @@ import java.util.List;
 public class ProfileController {
 
     public MenuItem logout;
+    public ImageView profileImageView2;
+    public Text descriptionText;
     @FXML
     private VBox postsContainer;
 
@@ -55,9 +59,14 @@ public class ProfileController {
     private Region spacer2;
 
     @FXML
-    private Button nextButton;
+    private Button followButton;
     @FXML
     private ImageView profileImageView;
+    @FXML
+    private VBox leftSection;  // The section that takes 25%
+
+    @FXML
+    private VBox rightSection; // The section that takes 75%
 
     SQLitePostDOA sqLitePostDOA = new SQLitePostDOA();
     SQLiteUserDOA sqLiteUserDOA = new SQLiteUserDOA();
@@ -75,6 +84,13 @@ public class ProfileController {
 // gets the current user who is logged in, and initialises list of posts
     @FXML
     public void initialize() throws SQLException {
+        leftSection.sceneProperty().addListener((observable, oldScene, newScene) -> {
+            if (newScene != null) {
+                // Bind the width properties to maintain 25%-75% ratio
+                leftSection.prefWidthProperty().bind(newScene.widthProperty().multiply(0.25));
+                rightSection.prefWidthProperty().bind(newScene.widthProperty().multiply(0.75));
+            }
+        });
         session = new LoginController.Session();
         changeLabelText();
         HBox.setHgrow(spacer, Priority.ALWAYS);
@@ -82,6 +98,7 @@ public class ProfileController {
         Image image = sqLiteUserDOA.getProfilePicture(session.getLoggedInUser());
         if (image != null) {
             profileImageView.setImage(image);
+            profileImageView2.setImage(image);
         }
         String currentUser = session.getLoggedInUser();
         List<Post> posts = SQLitePostDOA.getPostsByAuthor(currentUser);
@@ -89,20 +106,22 @@ public class ProfileController {
             VBox postBox = createPostBox(post);
             postsContainer.getChildren().add(postBox);
         }
+
     }
     @FXML
     public void logOut() throws IOException {
         LoginController.Session.clearSession();
-        Stage window = (Stage) nextButton.getScene().getWindow();
+        Stage window = (Stage) followButton.getScene().getWindow();
         FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("Login_UI.fxml"));
         Parent root = fxmlLoader.load();
         Scene scene = new Scene(root, HelloApplication.WIDTH, HelloApplication.HEIGHT);
         window.setScene(scene);
+
     }
     //redirects user to the post creation page
     @FXML
     protected void onNextButtonClick() throws IOException {
-        Stage window = (Stage) nextButton.getScene().getWindow();
+        Stage window = (Stage) followButton.getScene().getWindow();
         FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("Create_Post.fxml"));
         Parent root = fxmlLoader.load();
         Scene scene = new Scene(root, HelloApplication.WIDTH, HelloApplication.HEIGHT);
@@ -110,10 +129,12 @@ public class ProfileController {
     }
 // sets the username label to current user and number of posts label to the total posts the user has made
     private void changeLabelText() throws SQLException {
+        User user = sqLiteUserDOA.getUser(session.getLoggedInUser());
         String currentUser = session.getLoggedInUser();
         welcomeText1.setText(currentUser);
         welcomeText4.setText("0");
         welcomeText5.setText(String.valueOf(sqLitePostDOA.getNumPosts(currentUser)));
+        descriptionText.setText(user.getDescription());
     }
 // Dynamically adds all of the details for a post based on the list of Posts created by the user
     private VBox createPostBox(Post post) {
@@ -183,4 +204,7 @@ public class ProfileController {
     }
 
 
+    public void HomeButton(ActionEvent actionEvent) {
+
+    }
 }
