@@ -3,6 +3,7 @@ package com.example.cab302project.Controller;
 import com.example.cab302project.Model.Post;
 import com.example.cab302project.Model.SQLitePostDOA;
 
+import javax.swing.*;
 import java.sql.SQLException;
 
 import static com.example.cab302project.Controller.LoginController.Session.getLoggedInUser;

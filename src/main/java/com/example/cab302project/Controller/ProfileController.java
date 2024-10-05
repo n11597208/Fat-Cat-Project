@@ -12,9 +12,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.MenuItem;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
@@ -28,6 +26,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Optional;
 
 public class ProfileController {
 
@@ -198,7 +197,41 @@ public class ProfileController {
             Scene scene = new Scene(root, HelloApplication.WIDTH, HelloApplication.HEIGHT);
             window.setScene(scene);
         });
-        controlBox.getChildren().addAll(editButton, deleteButton);
+
+
+        // Method to add comments
+        Button addCommentButton = new Button("Add Comment");
+        VBox commentsBox = new VBox();
+        commentsBox.setSpacing(10);
+
+        addCommentButton.setOnAction(e -> {
+            // prompt the user for a comment
+            TextInputDialog commentDialog = new TextInputDialog();
+            commentDialog.setTitle("Add Comment");
+            commentDialog.setHeaderText(null);
+            commentDialog.setContentText("Enter your comment:");
+
+            // show the dialog and capture the user's input
+            Optional<String> commentResult = commentDialog.showAndWait();
+            commentResult.ifPresent(comment -> {
+                if (comment.trim().isEmpty()) {
+                    // Show a warning if the comment is empty
+                    Alert emptyAlert = new Alert(Alert.AlertType.WARNING);
+                    emptyAlert.setTitle("Warning");
+                    emptyAlert.setHeaderText(null);
+                    emptyAlert.setContentText("Comment cannot be empty!");
+                    emptyAlert.showAndWait();
+                } else {
+                    // Add the comment to the commentsBox
+                    Label commentLabel2 = new Label(comment);
+                    commentsBox.getChildren().add(commentLabel2);
+                }
+
+            });
+        });
+
+
+        controlBox.getChildren().addAll(editButton, deleteButton, addCommentButton, commentsBox);
         postBox.getChildren().addAll(postImageView, postTitle, postDescription, detailsBox, controlBox);
         return postBox;
     }
