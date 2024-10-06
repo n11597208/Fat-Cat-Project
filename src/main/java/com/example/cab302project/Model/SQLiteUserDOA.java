@@ -32,6 +32,7 @@ public class SQLiteUserDOA {
                         image = new Image(inputStream);
                     }
                 }
+
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -57,32 +58,58 @@ public class SQLiteUserDOA {
 
 
                     User user = new User(userID, firstName, lastName, email, userName, followers, numberOfPosts, description);
-                    return  user;
-                    }
-                } catch (SQLException ex) {
+                    return user;
+
+                }
+            } catch (SQLException ex) {
                 throw new RuntimeException(ex);
             }
+
         }
-
-
 
 
         return null; // Returns null if not found
     }
+
     public ObservableList<String> getAllUsers(String username) {
-    String sql = "SELECT username FROM users WHERE username != ?";
-    ObservableList userList = FXCollections.observableArrayList();
-    try (PreparedStatement statement = connection.prepareStatement(sql)) {
-        statement.setString(1, username);
-        try (ResultSet resultSet = statement.executeQuery()) {
-            if (resultSet.next()) {
-                userList.add(resultSet.getString("username"));
+        String sql = "SELECT username FROM users WHERE username != ?";
+        ObservableList userList = FXCollections.observableArrayList();
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, username);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    userList.add(resultSet.getString("username"));
+                }
             }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
-    } catch (SQLException e) {
-        throw new RuntimeException(e);
+        return userList;
     }
-    return userList;
+
+    public void incrementFollowers(String username, String follower, Integer amount) {
+        String selectQuery = "SELECT followers FROM users WHERE username = ?";
+        String updateQuery = "UPDATE users SET followers = ? WHERE username = ?";
+
+        try (PreparedStatement selectStatement = connection.prepareStatement(selectQuery)) {
+            selectStatement.setString(1, username);
+            try (ResultSet resultSet = selectStatement.executeQuery()) {
+                if (resultSet.next()) {
+                    int followers = resultSet.getInt("followers");
+                    followers += amount;
+
+                    // Update the followers count
+                    try (PreparedStatement updateStatement = connection.prepareStatement(updateQuery)) {
+                        updateStatement.setInt(1, followers);
+                        updateStatement.setString(2, username);
+                        updateStatement.executeUpdate();
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Error incrementing followers: " + e.getMessage(), e);
+        }
     }
+
 }
 

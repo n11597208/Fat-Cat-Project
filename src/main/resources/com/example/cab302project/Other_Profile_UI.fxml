@@ -18,7 +18,7 @@
 
 <?import javafx.scene.text.Text?>
 <BorderPane xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="com.example.cab302project.Controller.ProfileController" stylesheets="@navbas.css" style="-fx-background-color: white;">
+            fx:controller="com.example.cab302project.Controller.ViewingProfileController" stylesheets="@navbas.css" style="-fx-background-color: white;">
 
     <!-- Top MenuBar -->
     <top>
@@ -74,14 +74,13 @@
 
                 <HBox fillHeight="false" prefHeight="30.0" prefWidth="500.0" alignment="CENTER">
                     <children>
-                        <Label fx:id="welcomeText4" text="0" style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
+                        <Label fx:id="followerCount" text="0" style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
                         <Region fx:id="spacer2"/>
                         <Label fx:id="welcomeText5" text="1" style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
                     </children>
                 </HBox>
                 <Text fx:id="descriptionText" wrappingWidth="200" text="No Description"/>
-
-                <Button fx:id="followButton" style="-fx-background-color: #128aff; -fx-pref-width: 200;" text="Follow" textAlignment="CENTER" textFill="WHITE"/>
+                <Button fx:id="followButton" onAction="#followOnAction" style="-fx-background-color: #128aff; -fx-pref-width: 200;" text="Follow" textAlignment="CENTER" textFill="WHITE"/>
             </VBox>
 
 

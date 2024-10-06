@@ -4,6 +4,7 @@ import com.example.cab302project.HelloApplication;
 import com.example.cab302project.Model.Post;
 import com.example.cab302project.Model.SQLitePostDOA;
 import com.example.cab302project.Model.SQLiteUserDOA;
+import com.example.cab302project.Model.ViewingUser;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -16,6 +17,7 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
@@ -51,14 +53,41 @@ public class HomeController {
                 accountListView.setItems(accounts.filtered(account -> account.toLowerCase().contains(newValue.toLowerCase())));
             }
         });
+
+        // Set onMouseClicked event listener
+        accountListView.setOnMouseClicked((MouseEvent event) -> {
+            if (event.getClickCount() == 2) { // Double-click
+                String selectedUser = accountListView.getSelectionModel().getSelectedItem();
+                if (selectedUser != null) {
+                    try {
+                        // Handle the row click and navigate to the next page
+                        handleRowClick();
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            }
+        });
+
+        // Set profile picture for the logged-in user
         LoginController.Session session = new LoginController.Session();
         Image image = sqLiteUserDOA.getProfilePicture(session.getLoggedInUser());
         if (image != null) {
             profileImageView.setImage(image);
         }
-        String currentUser = session.getLoggedInUser();
     }
 
+    // Method to handle the row click event
+    private void handleRowClick() throws IOException {
+        ViewingUser.setSelectedUser(accountListView.getSelectionModel().getSelectedItem());
+        Stage window = (Stage) search.getScene().getWindow();
+        FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("Other_Profile_UI.fxml"));
+        Parent root = fxmlLoader.load();
+        Scene scene = new Scene(root, HelloApplication.WIDTH, HelloApplication.HEIGHT);
+        window.setScene(scene);
+    }
+
+    // Redirects user to the home page
     public void HomeButton(ActionEvent actionEvent) throws IOException {
         Stage window = (Stage) search.getScene().getWindow();
         FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("Home_UI.fxml"));
@@ -75,10 +104,9 @@ public class HomeController {
         Parent root = fxmlLoader.load();
         Scene scene = new Scene(root, HelloApplication.WIDTH, HelloApplication.HEIGHT);
         window.setScene(scene);
-
     }
 
-    //redirects user to the post creation page
+    // Redirects user to the post creation page
     @FXML
     protected void onNextButtonClick() throws IOException {
         Stage window = (Stage) search.getScene().getWindow();
@@ -88,6 +116,12 @@ public class HomeController {
         window.setScene(scene);
     }
 
-    public void HandleSearch(ActionEvent actionEvent) {
+    public void pageRedirect(ActionEvent actionEvent) throws IOException {
+        Stage window = (Stage) search.getScene().getWindow();
+        FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("Profile_UI.fxml"));
+        Parent root = fxmlLoader.load();
+        Scene scene = new Scene(root, HelloApplication.WIDTH, HelloApplication.HEIGHT);
+        window.setScene(scene);
     }
+
 }

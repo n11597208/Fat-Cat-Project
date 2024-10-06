@@ -186,6 +186,23 @@ public static Post getPost(int id) {
 
         return posts;
     }
+    public void incrementFollowers(String username){
+        try {
+            PreparedStatement statement = connection.prepareStatement("SELECT * followers FROM user WHERE userID = ?");
+            statement.setString(1, username);
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                int followers = resultSet.getInt("followers");
+                followers += 1;
+                PreparedStatement statement2 = connection.prepareStatement("UPDATE followers SET followers = ? WHERE userID = ?");
+                statement2.setInt(1, followers);
+                statement2.setString(2, username);
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
 }
 
