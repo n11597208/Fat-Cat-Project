@@ -54,7 +54,7 @@
                     <graphic>
                         <ImageView fx:id="profileImageView" fitHeight="60.0" fitWidth="60.0"/>
                     </graphic>
-                    <MenuItem text="View Profile"/>
+                    <MenuItem onAction="#pageRedirect" text="View Profile"/>
                     <MenuItem text="Settings"/>
                     <MenuItem fx:id="logout" onAction="#logOut" text="Logout"/>
                 </Menu>
@@ -74,7 +74,7 @@
                     <TextField fx:id="accountSearchField" promptText="Search Account..."/>
 
 
-                <Button fx:id="search" onAction="#HandleSearch" style="-fx-background-color: #128aff; -fx-pref-width: 200;" text="Search" textAlignment="CENTER" textFill="WHITE"/>
+                <Button fx:id="search" style="-fx-background-color: #128aff; -fx-pref-width: 200;" text="Search" textAlignment="CENTER" textFill="WHITE"/>
             </HBox>
             <ListView fx:id="accountListView" prefHeight="150"/>
 

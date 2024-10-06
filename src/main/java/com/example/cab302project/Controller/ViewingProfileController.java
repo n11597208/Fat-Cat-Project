@@ -1,10 +1,7 @@
 package com.example.cab302project.Controller;
 
 import com.example.cab302project.HelloApplication;
-import com.example.cab302project.Model.Post;
-import com.example.cab302project.Model.SQLitePostDOA;
-import com.example.cab302project.Model.SQLiteUserDOA;
-import com.example.cab302project.Model.User;
+import com.example.cab302project.Model.*;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -29,11 +26,11 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 
-public class ProfileController {
-
+public class ViewingProfileController {
     public MenuItem logout;
     public ImageView profileImageView2;
     public Text descriptionText;
+    public Label followerCount;
     @FXML
     private VBox postsContainer;
 
@@ -81,9 +78,34 @@ public class ProfileController {
     public static int getId() {
         return id;
     }
-// gets the current user who is logged in, and initialises list of posts
+    // gets the current user who is logged in, and initialises list of posts
     @FXML
     public void initialize() throws SQLException {
+        SQLiteFollowDOA sqLiteFollowDOA = new SQLiteFollowDOA();
+        try {
+            if ((sqLiteFollowDOA.isFollower(ViewingUser.getSelectedUser(),LoginController.Session.getLoggedInUser()))){
+//                followButton.setDisable(true);
+                followButton.setText("UnFollow");
+                followButton.setStyle("-fx-text-fill: red;");
+                    followButton.setOnAction((ActionEvent event) -> {
+                        try {
+                            sqLiteFollowDOA.unfollow(ViewingUser.getSelectedUser(), LoginController.Session.getLoggedInUser());
+                            sqLiteUserDOA.incrementFollowers(ViewingUser.getSelectedUser(), LoginController.Session.getLoggedInUser(), -1);
+                            Stage window = (Stage) followButton.getScene().getWindow();
+                            FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("Other_Profile_UI.fxml"));
+                            Parent root = fxmlLoader.load();
+                            Scene scene = new Scene(root, HelloApplication.WIDTH, HelloApplication.HEIGHT);
+                            window.setScene(scene);
+                        } catch (SQLException e) {
+                            throw new RuntimeException(e);
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
+                    });
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
         leftSection.sceneProperty().addListener((observable, oldScene, newScene) -> {
             if (newScene != null) {
                 // Bind the width properties to maintain 25%-75% ratio
@@ -96,12 +118,13 @@ public class ProfileController {
         HBox.setHgrow(spacer, Priority.ALWAYS);
         HBox.setHgrow(spacer2, Priority.ALWAYS);
         Image image = sqLiteUserDOA.getProfilePicture(session.getLoggedInUser());
+        Image profileImage = sqLiteUserDOA.getProfilePicture(ViewingUser.getSelectedUser());
         if (image != null) {
             profileImageView.setImage(image);
-            profileImageView2.setImage(image);
+            profileImageView2.setImage(profileImage);
         }
-        String currentUser = session.getLoggedInUser();
-        List<Post> posts = SQLitePostDOA.getPostsByAuthor(currentUser);
+//        String currentUser = session.getLoggedInUser();
+        List<Post> posts = SQLitePostDOA.getPostsByAuthor(ViewingUser.getSelectedUser());
         for (Post post : posts) {
             VBox postBox = createPostBox(post);
             postsContainer.getChildren().add(postBox);
@@ -127,16 +150,16 @@ public class ProfileController {
         Scene scene = new Scene(root, HelloApplication.WIDTH, HelloApplication.HEIGHT);
         window.setScene(scene);
     }
-// sets the username label to current user and number of posts label to the total posts the user has made
+    // sets the username label to current user and number of posts label to the total posts the user has made
     private void changeLabelText() throws SQLException {
-        User user = sqLiteUserDOA.getUser(session.getLoggedInUser());
-        String currentUser = session.getLoggedInUser();
-        welcomeText1.setText(currentUser);
-        welcomeText4.setText("0");
-        welcomeText5.setText(String.valueOf(sqLitePostDOA.getNumPosts(currentUser)));
+        User user = sqLiteUserDOA.getUser(ViewingUser.getSelectedUser());
+
+        welcomeText1.setText(ViewingUser.getSelectedUser());
+        followerCount.setText(String.valueOf(user.getFollowers()));
+        welcomeText5.setText(String.valueOf(sqLitePostDOA.getNumPosts(ViewingUser.getSelectedUser())));
         descriptionText.setText(user.getDescription());
     }
-// Dynamically adds all of the details for a post based on the list of Posts created by the user
+    // Dynamically adds all of the details for a post based on the list of Posts created by the user
     private VBox createPostBox(Post post) {
         VBox postBox = new VBox();
         postBox.setAlignment(Pos.CENTER_LEFT);
@@ -211,10 +234,20 @@ public class ProfileController {
         Scene scene = new Scene(root, HelloApplication.WIDTH, HelloApplication.HEIGHT);
         window.setScene(scene);
     }
-
     public void pageRedirect(ActionEvent actionEvent) throws IOException {
         Stage window = (Stage) followButton.getScene().getWindow();
         FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("Profile_UI.fxml"));
+        Parent root = fxmlLoader.load();
+        Scene scene = new Scene(root, HelloApplication.WIDTH, HelloApplication.HEIGHT);
+        window.setScene(scene);
+    }
+
+    public void followOnAction(ActionEvent actionEvent) throws IOException {
+        SQLiteFollowDOA sqliteFollowDOA = new SQLiteFollowDOA();
+        sqliteFollowDOA.insertFollower(ViewingUser.getSelectedUser(), LoginController.Session.getLoggedInUser());
+        sqLiteUserDOA.incrementFollowers(ViewingUser.getSelectedUser(), LoginController.Session.getLoggedInUser(), 1);
+        Stage window = (Stage) followButton.getScene().getWindow();
+        FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("Other_Profile_UI.fxml"));
         Parent root = fxmlLoader.load();
         Scene scene = new Scene(root, HelloApplication.WIDTH, HelloApplication.HEIGHT);
         window.setScene(scene);

@@ -47,7 +47,7 @@
                     <graphic>
                         <ImageView fx:id="profileImageView" fitHeight="60.0" fitWidth="60.0"/>
                     </graphic>
-                    <MenuItem text="View Profile"/>
+                    <MenuItem onAction="#pageRedirect" text="View Profile"/>
                     <MenuItem text="Settings"/>
                     <MenuItem fx:id="logout" onAction="#logOut" text="Logout"/>
                 </Menu>
