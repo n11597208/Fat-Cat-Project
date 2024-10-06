@@ -57,9 +57,6 @@ public class ProfileController {
 
     @FXML
     private Region spacer2;
-
-    @FXML
-    private Button followButton;
     @FXML
     private ImageView profileImageView;
     @FXML
@@ -111,7 +108,7 @@ public class ProfileController {
     @FXML
     public void logOut() throws IOException {
         LoginController.Session.clearSession();
-        Stage window = (Stage) followButton.getScene().getWindow();
+        Stage window = (Stage) welcomeText1.getScene().getWindow();
         FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("Login_UI.fxml"));
         Parent root = fxmlLoader.load();
         Scene scene = new Scene(root, HelloApplication.WIDTH, HelloApplication.HEIGHT);
@@ -121,7 +118,7 @@ public class ProfileController {
     //redirects user to the post creation page
     @FXML
     protected void onNextButtonClick() throws IOException {
-        Stage window = (Stage) followButton.getScene().getWindow();
+        Stage window = (Stage) welcomeText1.getScene().getWindow();
         FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("Create_Post.fxml"));
         Parent root = fxmlLoader.load();
         Scene scene = new Scene(root, HelloApplication.WIDTH, HelloApplication.HEIGHT);
@@ -132,7 +129,7 @@ public class ProfileController {
         User user = sqLiteUserDOA.getUser(session.getLoggedInUser());
         String currentUser = session.getLoggedInUser();
         welcomeText1.setText(currentUser);
-        welcomeText4.setText("0");
+        welcomeText4.setText(String.valueOf(user.getFollowers()));
         welcomeText5.setText(String.valueOf(sqLitePostDOA.getNumPosts(currentUser)));
         descriptionText.setText(user.getDescription());
     }
@@ -205,7 +202,7 @@ public class ProfileController {
 
 
     public void HomeButton(ActionEvent actionEvent) throws IOException {
-        Stage window = (Stage) followButton.getScene().getWindow();
+        Stage window = (Stage) welcomeText1.getScene().getWindow();
         FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("Home_UI.fxml"));
         Parent root = fxmlLoader.load();
         Scene scene = new Scene(root, HelloApplication.WIDTH, HelloApplication.HEIGHT);
@@ -213,7 +210,7 @@ public class ProfileController {
     }
 
     public void pageRedirect(ActionEvent actionEvent) throws IOException {
-        Stage window = (Stage) followButton.getScene().getWindow();
+        Stage window = (Stage) welcomeText1.getScene().getWindow();
         FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("Profile_UI.fxml"));
         Parent root = fxmlLoader.load();
         Scene scene = new Scene(root, HelloApplication.WIDTH, HelloApplication.HEIGHT);

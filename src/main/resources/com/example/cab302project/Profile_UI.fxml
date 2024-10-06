@@ -81,7 +81,7 @@
                 </HBox>
                 <Text fx:id="descriptionText" wrappingWidth="200" text="No Description"/>
 
-                <Button fx:id="followButton" style="-fx-background-color: #128aff; -fx-pref-width: 200;" text="Follow" textAlignment="CENTER" textFill="WHITE"/>
+
             </VBox>
 
 
