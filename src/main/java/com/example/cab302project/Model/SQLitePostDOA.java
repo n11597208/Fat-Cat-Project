@@ -1,6 +1,11 @@
 package com.example.cab302project.Model;
 
+import javax.swing.*;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 import java.sql.*;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -203,6 +208,24 @@ public static Post getPost(int id) {
             throw new RuntimeException(e);
         }
     }
+
+    public void commentTable() {
+        String sql = "CREATE TABLE IF NOT EXISTS comments (" +
+                "commentId INTEGER PRIMARY KEY AUTOINCREMENT," +
+                "postId INTEGER NOT NULL," +
+                "commentText TEXT NOT NULL," +
+                "timestamp TEXT NOT NULL," +
+                "FOREIGN KEY(id) REFERENCES posts(id)" +
+                ");";
+
+        try (Statement stmt = connection.createStatement()) {
+            stmt.execute(sql);
+        } catch (SQLException e) {
+            System.out.println("Error creating comments table: " + e.getMessage());
+        }
+    }
+
+
 
 }
 
