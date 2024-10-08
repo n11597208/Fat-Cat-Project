@@ -80,7 +80,8 @@ public class ProfileController {
     public static int getId() {
         return id;
     }
-// gets the current user who is logged in, and initialises list of posts
+
+    // gets the current user who is logged in, and initialises list of posts
     @FXML
     public void initialize() throws SQLException {
         leftSection.sceneProperty().addListener((observable, oldScene, newScene) -> {
@@ -105,8 +106,8 @@ public class ProfileController {
             VBox postBox = createPostBox(post);
             postsContainer.getChildren().add(postBox);
         }
-
     }
+
     @FXML
     public void logOut() throws IOException {
         LoginController.Session.clearSession();
@@ -115,9 +116,9 @@ public class ProfileController {
         Parent root = fxmlLoader.load();
         Scene scene = new Scene(root, HelloApplication.WIDTH, HelloApplication.HEIGHT);
         window.setScene(scene);
-
     }
-    //redirects user to the post creation page
+
+    // redirects user to the post creation page
     @FXML
     protected void onNextButtonClick() throws IOException {
         Stage window = (Stage) followButton.getScene().getWindow();
@@ -126,7 +127,8 @@ public class ProfileController {
         Scene scene = new Scene(root, HelloApplication.WIDTH, HelloApplication.HEIGHT);
         window.setScene(scene);
     }
-// sets the username label to current user and number of posts label to the total posts the user has made
+
+    // sets the username label to current user and number of posts label to the total posts the user has made
     private void changeLabelText() throws SQLException {
         User user = sqLiteUserDOA.getUser(session.getLoggedInUser());
         String currentUser = session.getLoggedInUser();
@@ -135,44 +137,49 @@ public class ProfileController {
         welcomeText5.setText(String.valueOf(sqLitePostDOA.getNumPosts(currentUser)));
         descriptionText.setText(user.getDescription());
     }
-// Dynamically adds all of the details for a post based on the list of Posts created by the user
+
+    // Dynamically adds all of the details for a post based on the list of Posts created by the user
     private VBox createPostBox(Post post) {
         VBox postBox = new VBox();
         postBox.setAlignment(Pos.CENTER_LEFT);
         postBox.setSpacing(10);
         postBox.setPadding(new Insets(10));
         postBox.setStyle("-fx-border-color: lightgray; -fx-border-width: 1;");
+
         ImageView postImageView = new ImageView();
         postImageView.setFitWidth(150);
         postImageView.setFitHeight(150);
         if (post.getPostImage() != null) {
             byte[] imageBytes = post.getPostImage();
-            System.out.println("Image size: " + imageBytes.length);
             postImageView.setImage(new Image(new ByteArrayInputStream(imageBytes)));
-        } else {
-            System.out.println("No image for this post");
         }
+
         Label postTitle = new Label(post.getTitle());
         postTitle.setStyle("-fx-font-size: 18px; -fx-font-weight: bold;");
         Label postDescription = new Label(post.getDescription());
         postDescription.setWrapText(true);
+
         HBox detailsBox = new HBox();
         detailsBox.setAlignment(Pos.CENTER_LEFT);
         detailsBox.setSpacing(10);
         Label ratingLabel = new Label("Rating: " + post.getRating());
-        Label commentLabel = new Label("Comments: " + post.getNumComments());
+        Button commentButton = new Button("Comments: " + post.getNumComments());
+        commentButton.setOnAction(e -> {
+            displayComments(post);
+        });
+
         Label shareLabel = new Label("Shares: " + post.getNumshares());
-        detailsBox.getChildren().addAll(ratingLabel, commentLabel, shareLabel);
+        detailsBox.getChildren().addAll(ratingLabel, commentButton, shareLabel);
+
         HBox controlBox = new HBox();
         controlBox.setAlignment(Pos.CENTER_LEFT);
         controlBox.setSpacing(10);
+
         Button editButton = new Button("Edit");
         editButton.setOnAction(e -> {
             try {
                 int id = post.getId();
-                System.out.println("Edit post: " + id);
                 setId(id);
-
                 Stage window = (Stage) editButton.getScene().getWindow();
                 FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("Edit_Post.fxml"));
                 Parent root = fxmlLoader.load();
@@ -182,36 +189,37 @@ public class ProfileController {
                 ex.printStackTrace();
             }
         });
-        Button deleteButton = new Button("Delete" );
+
+        Button deleteButton = new Button("Delete");
         deleteButton.setOnAction(e -> {
             int postId = post.getId();
             sqLitePostDOA.deletePost(postId);
             Stage window = (Stage) deleteButton.getScene().getWindow();
             FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("Profile_UI.fxml"));
-            Parent root = null;
+            Parent root;
             try {
                 root = fxmlLoader.load();
+                Scene scene = new Scene(root, HelloApplication.WIDTH, HelloApplication.HEIGHT);
+                window.setScene(scene);
             } catch (IOException ex) {
-                throw new RuntimeException(ex);
+                ex.printStackTrace();
             }
-            Scene scene = new Scene(root, HelloApplication.WIDTH, HelloApplication.HEIGHT);
-            window.setScene(scene);
         });
 
-
-        // Method to add comments
+        // Add comment button and commentsBox
         Button addCommentButton = new Button("Add Comment");
         VBox commentsBox = new VBox();
         commentsBox.setSpacing(10);
+        commentsBox.setPadding(new Insets(5, 0, 0, 0)); // Padding for comments
 
         addCommentButton.setOnAction(e -> {
-            // prompt the user for a comment
+            // Prompt the user for a comment
             TextInputDialog commentDialog = new TextInputDialog();
             commentDialog.setTitle("Add Comment");
             commentDialog.setHeaderText(null);
             commentDialog.setContentText("Enter your comment:");
 
-            // show the dialog and capture the user's input
+            // Show the dialog and capture the user's input
             Optional<String> commentResult = commentDialog.showAndWait();
             commentResult.ifPresent(comment -> {
                 if (comment.trim().isEmpty()) {
@@ -223,19 +231,33 @@ public class ProfileController {
                     emptyAlert.showAndWait();
                 } else {
                     // Add the comment to the commentsBox
-                    Label commentLabel2 = new Label(comment);
-                    commentsBox.getChildren().add(commentLabel2);
+                    Label commentLabel = new Label(comment);
+                    commentLabel.setWrapText(true); // Wrap text for long comments
+                    commentsBox.getChildren().add(commentLabel);
                 }
-
             });
         });
 
+        controlBox.getChildren().addAll(editButton, deleteButton, addCommentButton);
 
-        controlBox.getChildren().addAll(editButton, deleteButton, addCommentButton, commentsBox);
-        postBox.getChildren().addAll(postImageView, postTitle, postDescription, detailsBox, controlBox);
+        // Add all components to postBox
+        postBox.getChildren().addAll(postImageView, postTitle, postDescription, detailsBox, controlBox, commentsBox);
         return postBox;
     }
 
+    // New method to display comments
+    private void displayComments(Post post) {
+        Alert commentsAlert = new Alert(Alert.AlertType.INFORMATION);
+        commentsAlert.setTitle("Comments for: " + post.getTitle());
+        commentsAlert.setHeaderText(null);
+
+        // You can retrieve and display comments related to the post here
+        // For demonstration, let's just display a placeholder message
+        String comments = "Comments for post: " + post.getTitle(); // Replace with actual comments fetching logic
+        commentsAlert.setContentText(comments);
+
+        commentsAlert.showAndWait();
+    }
 
     public void HomeButton(ActionEvent actionEvent) throws IOException {
         Stage window = (Stage) followButton.getScene().getWindow();
