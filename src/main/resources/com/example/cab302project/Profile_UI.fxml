@@ -18,7 +18,8 @@
 
 <?import javafx.scene.text.Text?>
 <BorderPane xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="com.example.cab302project.Controller.ProfileController" stylesheets="@navbas.css" style="-fx-background-color: white;">
+            fx:controller="com.example.cab302project.Controller.ProfileController" stylesheets="@navbas.css"
+            style="-fx-background-color: white;">
 
     <!-- Top MenuBar -->
     <top>
@@ -62,11 +63,13 @@
             <!-- Section taking 25% -->
             <VBox fx:id="leftSection" HBox.hgrow="ALWAYS" maxWidth="Infinity" alignment="TOP_CENTER" spacing="15">
                 <ImageView fx:id="profileImageView2" fitHeight="100.0" fitWidth="100.0"/>
-                <Label fx:id="welcomeText1" text="Username" style="-fx-font-size: 24px; -fx-font-weight: bold;" alignment="CENTER"/>
+                <Label fx:id="welcomeText1" text="Username" style="-fx-font-size: 24px; -fx-font-weight: bold;"
+                       alignment="CENTER"/>
 
                 <HBox fillHeight="false" prefHeight="30.0" prefWidth="500.0" alignment="CENTER">
                     <children>
-                        <Label fx:id="welcomeText2" text="Followers" style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
+                        <Label fx:id="welcomeText2" text="Followers"
+                               style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
                         <Region fx:id="spacer"/>
                         <Label fx:id="welcomeText3" text="Posts" style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
                     </children>
@@ -81,7 +84,6 @@
                 </HBox>
                 <Text fx:id="descriptionText" wrappingWidth="200" text="No Description"/>
 
-                <Button fx:id="followButton" style="-fx-background-color: #128aff; -fx-pref-width: 200;" text="Follow" textAlignment="CENTER" textFill="WHITE"/>
             </VBox>
 
 
@@ -96,7 +98,6 @@
                         </VBox>
                     </content>
                 </ScrollPane>
-
 
 
             </VBox>
