@@ -21,7 +21,9 @@ public class SQLiteCommentDAO {
                 "postId INTEGER NOT NULL," +
                 "commentText TEXT NOT NULL," +
                 "timestamp TEXT NOT NULL," +
+                "author TEXT NOT NULL," +
                 "FOREIGN KEY(postId) REFERENCES posts(id)" +
+                "FOREIGN KEY(author) REFERENCES users(username)" +
                 ");";
         try (Statement stmt = connection.createStatement()) {
             stmt.execute(sql);
@@ -31,12 +33,13 @@ public class SQLiteCommentDAO {
     }
 
     // Method to add a new comment to a post
-    public void addComment(int postId, String commentText) throws SQLException {
-        String sql = "INSERT INTO comments (postId, commentText, timestamp) VALUES (?, ?, ?)";
+    public void addComment( Comment comment) throws SQLException {
+        String sql = "INSERT INTO comments (postId, commentText, timestamp, author) VALUES (?, ?, ?, ?)";
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setInt(1, postId);
-            statement.setString(2, commentText);
-            statement.setString(3, LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME)); // Store current timestamp
+            statement.setInt(1, comment.getPostId());
+            statement.setString(2, comment.getText());
+            statement.setString(3, LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME));
+            statement.setString(4, comment.getAuthor());
             statement.executeUpdate();
         }
     }
@@ -52,7 +55,8 @@ public class SQLiteCommentDAO {
                     int commentId = resultSet.getInt("commentId");
                     String commentText = resultSet.getString("commentText");
                     String timestamp = resultSet.getString("timestamp");
-                    comments.add(new Comment(commentId, postId, commentText, timestamp)); // Adjust constructor as needed
+                    String author = resultSet.getString("author");
+                    comments.add(new Comment( postId, commentText, timestamp, author) ); // Adjust constructor as needed
                 }
             }
         }
