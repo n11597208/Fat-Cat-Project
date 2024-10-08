@@ -13,7 +13,7 @@ public class Comment {
         this.timestamp = timestamp;
         this.author = author;
     }
-
+//d
     public int getCommentId() {
         return commentId;
     }
