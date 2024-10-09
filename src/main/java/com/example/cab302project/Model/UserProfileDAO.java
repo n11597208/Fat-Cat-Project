@@ -1,4 +1,4 @@
-package com.example.cab302project.Model.;
+package com.example.cab302project.Model;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -27,23 +27,29 @@ public class UserProfileDAO {
     }
 
     // Method to fetch user profile from the 'users' table
-    public UserProfile getUserProfile(String username) {
-        UserProfile userProfile = null;
+    public User getUserProfile(String username) {
+        User user = null;
         String selectQuery = "SELECT * FROM users WHERE username = ?";
         try (PreparedStatement pstmt = connection.prepareStatement(selectQuery)) {
             pstmt.setString(1, username);
             ResultSet rs = pstmt.executeQuery();
 
             if (rs.next()) {
+                int id = rs.getInt("id");
                 String firstName = rs.getString("firstName");
                 String lastName = rs.getString("lastName");
                 String email = rs.getString("email");
-                userProfile = new UserProfile(firstName, lastName, username, email);
+                int followers = rs.getInt("followers");
+                int numberOfPosts = rs.getInt("numberOfPosts");
+                String description = rs.getString("description");
+
+                // Adjust the constructor call to match the expected parameters
+                user = new User(id, firstName, lastName, email, username, followers, numberOfPosts, description);
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return userProfile;
+        return user;
     }
 }
 

@@ -9,4 +9,6 @@ module com.example.cab302project {
 
     // Exporting the package for other modules to access
     exports com.example.cab302project;
+    exports com.example.cab302project.Controller;
+    opens com.example.cab302project.Controller to javafx.fxml;
 }
