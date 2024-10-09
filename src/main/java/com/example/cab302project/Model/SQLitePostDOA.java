@@ -128,7 +128,47 @@ public void updatePost(Post post, int postId) throws SQLException {
         statement.close();
         return numPosts;
     }
-//returns all of the post information for a specified post id
+    public void incrementFollowers(Integer postId) {
+        String selectQuery = "SELECT numberOfComments FROM posts WHERE id = ?";
+        String updateQuery = "UPDATE posts SET numberOfComments = ? WHERE id = ?";
+
+        try (PreparedStatement selectStatement = connection.prepareStatement(selectQuery)) {
+            selectStatement.setInt(1, postId);
+            try (ResultSet resultSet = selectStatement.executeQuery()) {
+                if (resultSet.next()) {
+                    int comments = resultSet.getInt("numberOfComments");
+                    comments += 1;
+
+                    // Update the followers count
+                    try (PreparedStatement updateStatement = connection.prepareStatement(updateQuery)) {
+                        updateStatement.setInt(1, comments);
+                        updateStatement.setInt(2, postId);
+                        updateStatement.executeUpdate();
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Error incrementing followers: " + e.getMessage(), e);
+        }
+    }
+    public Integer getFollowers(Integer postId) {
+        String selectQuery = "SELECT numberOfComments FROM posts WHERE id = ?";
+        try (PreparedStatement selectStatement = connection.prepareStatement(selectQuery)) {
+            selectStatement.setInt(1, postId);
+            try (ResultSet rs = selectStatement.executeQuery()) {  // Directly use the returned ResultSet
+                int comments = 0;
+                if (rs.next()) {
+                    comments = rs.getInt("numberOfComments");
+                }
+                return comments;
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Error retrieving number of comments: " + e.getMessage(), e);
+        }
+    }
+
+
+    //returns all of the post information for a specified post id
 public static Post getPost(int id) {
         String sql = "SELECT * FROM posts WHERE id = ?";
         try (PreparedStatement statement = connection.prepareStatement(sql)) {

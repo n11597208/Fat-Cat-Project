@@ -52,8 +52,6 @@ public class LoginController {
     }
 
     public LoginController() {
-        SqliteConnection LoginDAO = new SqliteConnection();
-        SQLitePostDOA postDAO = new SQLitePostDOA();
     }
 
     public void HandleSignUp(ActionEvent actionEvent) throws IOException {
