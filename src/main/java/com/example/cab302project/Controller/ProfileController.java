@@ -1,10 +1,7 @@
 package com.example.cab302project.Controller;
 
 import com.example.cab302project.HelloApplication;
-import com.example.cab302project.Model.Post;
-import com.example.cab302project.Model.SQLitePostDOA;
-import com.example.cab302project.Model.SQLiteUserDOA;
-import com.example.cab302project.Model.User;
+import com.example.cab302project.Model.*;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -69,6 +66,7 @@ public class ProfileController {
 
     SQLitePostDOA sqLitePostDOA = new SQLitePostDOA();
     SQLiteUserDOA sqLiteUserDOA = new SQLiteUserDOA();
+    SQLiteCommentDAO sqLiteCommentDAO = new SQLiteCommentDAO();
 
     private LoginController.Session session;
     public static int id;
@@ -163,9 +161,13 @@ public class ProfileController {
         detailsBox.setAlignment(Pos.CENTER_LEFT);
         detailsBox.setSpacing(10);
         Label ratingLabel = new Label("Rating: " + post.getRating());
-        Button commentButton = new Button("Comments: " + post.getNumComments());
+        Button commentButton = new Button("Comments: " + sqLitePostDOA.getFollowers(post.getId()));
         commentButton.setOnAction(e -> {
-            displayComments(post);
+            try {
+                displayComments(post);
+            } catch (SQLException ex) {
+                throw new RuntimeException(ex);
+            }
         });
 
         Label shareLabel = new Label("Shares: " + post.getNumshares());
@@ -230,10 +232,27 @@ public class ProfileController {
                     emptyAlert.setContentText("Comment cannot be empty!");
                     emptyAlert.showAndWait();
                 } else {
-                    // Add the comment to the commentsBox
-                    Label commentLabel = new Label(comment);
-                    commentLabel.setWrapText(true); // Wrap text for long comments
-                    commentsBox.getChildren().add(commentLabel);
+                    Comment newComment = new Comment( post.getId(), comment,null, LoginController.Session.getLoggedInUser());                    try {
+                        sqLiteCommentDAO.addComment(newComment);
+                        sqLitePostDOA.incrementFollowers(post.getId());
+                    } catch (SQLException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                    Stage window = (Stage) welcomeText1.getScene().getWindow();
+                    FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("ProfileController.fxml"));
+                    Parent root = null;
+                    try {
+                        root = fxmlLoader.load();
+                    } catch (IOException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                    Scene scene = new Scene(root, HelloApplication.WIDTH, HelloApplication.HEIGHT);
+                    window.setScene(scene);
+
+//                    // Add the comment to the commentsBox
+//                    Label commentLabel = new Label(comment);
+//                    commentLabel.setWrapText(true); // Wrap text for long comments
+//                    commentsBox.getChildren().add(commentLabel);
                 }
             });
         });
@@ -246,18 +265,49 @@ public class ProfileController {
     }
 
     // New method to display comments
-    private void displayComments(Post post) {
+    private void displayComments(Post post) throws SQLException {
         Alert commentsAlert = new Alert(Alert.AlertType.INFORMATION);
         commentsAlert.setTitle("Comments for: " + post.getTitle());
         commentsAlert.setHeaderText(null);
 
-        // You can retrieve and display comments related to the post here
-        // For demonstration, let's just display a placeholder message
-        String comments = "Comments for post: " + post.getTitle(); // Replace with actual comments fetching logic
-        commentsAlert.setContentText(comments);
+        // Fetch comments for the given post
+        List<Comment> commentsList = sqLiteCommentDAO.getCommentsByPostId(post.getId());
+
+        // StringBuilder to accumulate all comments with lines between them
+        StringBuilder comments = new StringBuilder();
+
+        // Loop through the list of comments and append them with a separator
+        for (Comment comment : commentsList) {
+            comments.append("Author: ").append(comment.getAuthor())
+                    .append("\n")
+                    .append("Comment: ").append(comment.getText())
+                    .append("\n")
+                    .append("Posted at: ").append(comment.getTimestamp())
+                    .append("\n")
+                    .append("----------------------------\n");  // Separator between comments
+        }
+
+        // If there are no comments, display a placeholder message
+        if (commentsList.isEmpty()) {
+            comments.append("No comments yet for this post.");
+        }
+
+        // Create a TextArea to make the comments scrollable
+        TextArea textArea = new TextArea(comments.toString());
+        textArea.setWrapText(true);  // Wrap text for long comments
+        textArea.setEditable(false); // Make it read-only
+        textArea.setPrefHeight(400); // Set a preferred height for the scrollable area
+
+        // To make sure the dialog resizes correctly
+        textArea.setMinHeight(Region.USE_PREF_SIZE);
+
+        // Set the TextArea as the expandable content in the alert
+        commentsAlert.getDialogPane().setContent(textArea);
 
         commentsAlert.showAndWait();
     }
+
+
 
     public void HomeButton(ActionEvent actionEvent) throws IOException {
         Stage window = (Stage) welcomeText1.getScene().getWindow();

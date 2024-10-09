@@ -1,10 +1,10 @@
 package com.example.cab302project.Controller;
 
 import com.example.cab302project.HelloApplication;
-import com.example.cab302project.Model.Post;
-import com.example.cab302project.Model.SQLitePostDOA;
 import com.example.cab302project.Model.SQLiteUserDOA;
 import com.example.cab302project.Model.ViewingUser;
+import com.example.cab302project.Observer;
+import com.example.cab302project.Subject;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -18,43 +18,40 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
-
-public class HomeController {
+public class HomeController implements Subject {
     public Button search;
     public ImageView profileImageView;
     @FXML
     private TextField accountSearchField;
-
     @FXML
     private ListView<String> accountListView;
-    SQLiteUserDOA sqLiteUserDOA = new SQLiteUserDOA();
 
+    private SQLiteUserDOA sqLiteUserDOA = new SQLiteUserDOA();
     private ObservableList<String> accounts = sqLiteUserDOA.getAllUsers(LoginController.Session.getLoggedInUser());
     private ObservableList<String> noSearch = FXCollections.observableArrayList();
 
+    // List to hold all observers
+    private List<Observer> observers = new ArrayList<>();
 
     public void initialize() throws SQLException {
         accountListView.setItems(noSearch);
+
+        // Add AccountListViewObserver as an observer
+        addObserver(new AccountListViewObserver(accountListView, accounts));
+
+        // Add listener to search field to notify observers when search term changes
         accountSearchField.textProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue.isEmpty()) {
-                // Display noSearch, which is an empty list, when search field is empty
-                accountListView.setItems(noSearch);
-            } else {
-                // Filter based on search term
-                accountListView.setItems(accounts.filtered(account -> account.toLowerCase().contains(newValue.toLowerCase())));
-            }
+            notifyObservers();  // Notify observers when the search term changes
         });
 
-        // Set onMouseClicked event listener
+        // Set onMouseClicked event listener for the ListView
         accountListView.setOnMouseClicked((MouseEvent event) -> {
             if (event.getClickCount() == 2) { // Double-click
                 String selectedUser = accountListView.getSelectionModel().getSelectedItem();
@@ -85,6 +82,34 @@ public class HomeController {
         Parent root = fxmlLoader.load();
         Scene scene = new Scene(root, HelloApplication.WIDTH, HelloApplication.HEIGHT);
         window.setScene(scene);
+    }
+
+    // Subject interface methods
+    @Override
+    public void addObserver(Observer observer) {
+        observers.add(observer);
+    }
+
+    @Override
+    public void removeObserver(Observer observer) {
+        observers.remove(observer);
+    }
+
+    @Override
+    public void addObserver(java.util.Observer observer) {
+
+    }
+
+    @Override
+    public void removeObserver(java.util.Observer observer) {
+
+    }
+
+    @Override
+    public void notifyObservers() {
+        for (Observer observer : observers) {
+            observer.update(accountSearchField.getText()); // Pass the search term to the observers
+        }
     }
 
     // Redirects user to the home page
@@ -123,5 +148,4 @@ public class HomeController {
         Scene scene = new Scene(root, HelloApplication.WIDTH, HelloApplication.HEIGHT);
         window.setScene(scene);
     }
-
 }
