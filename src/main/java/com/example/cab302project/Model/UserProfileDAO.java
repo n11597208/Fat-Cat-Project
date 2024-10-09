@@ -6,10 +6,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class UserProfileDAO {
-    private Connection connection;
+    private static Connection connection;
 
     public UserProfileDAO() {
-        connection = SqliteConnection.getInstance();
+        connection = SqliteConnection.connect();
     }
 
     // Method to update user profile in the 'users' table
