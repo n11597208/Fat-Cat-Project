@@ -84,12 +84,29 @@
     -fx-font-style: italic;
     -fx-text-fill: red;
 }
-
-/* Background image (Need work)
+/*Background image*/
 .root {
     -fx-background-image: url("file:/Users/amarbuyan/Desktop/CAB302/Fat-Cat-Project/src/main/resources/Image_assets/car_pic.jpg");
     -fx-background-size: cover;
     -fx-background-position: center center;
+    -fx-background-color: radial-gradient(                              /* Background color for when the picture doesn't work*/
+        focus-angle 0deg, focus-distance 0%, center 50% 50%, radius 50%,
+        reflect, #4f5c70, #94aed6
+    );
+}
+/*
+.root {
+    -fx-background-image: url("/Image_assets/car_pic.jpg");
+    -fx-background-size: cover;
+    -fx-background-position: center center;
 }
 */
+ /* Status messages */
+ .registration-message {
+     -fx-text-fill: green;
+ }
+
+ .confirm-password-message {
+     -fx-text-fill: red;
+ }
 
