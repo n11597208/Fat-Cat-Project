@@ -33,7 +33,7 @@ jobs:
           name: test-results
           path: target/surefire-reports/
       - name: Generate Javadoc
-        run: mvn javadoc:javadoc# Default location for Maven Surefire Plugin test reports
+        run: mvn javadoc:javadoc # Default location for Maven Surefire Plugin test reports
       - name: Publish Javadoc
         uses: JamesIves/github-pages-deploy-action@v4
         with:
