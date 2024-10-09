@@ -9,7 +9,7 @@ public class UserProfileDAO {
     private Connection connection;
 
     public UserProfileDAO() {
-        connection = SQLiteConnection.getInstance();
+        connection = SqliteConnection.getInstance();
     }
 
     // Method to update user profile in the 'users' table
