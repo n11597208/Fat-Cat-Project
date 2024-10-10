@@ -73,11 +73,11 @@ public class SQLiteCommentDAO {
     }
 
     // Optional: Method to update a comment by ID
-    public void updateComment(int commentId, String newCommentText) throws SQLException {
-        String sql = "UPDATE comments SET commentText = ? WHERE commentId = ?";
+    public void updateCommentUser(String CurrentUser, String newUserName) throws SQLException {
+        String sql = "UPDATE comments SET author = ? WHERE author = ?";
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setString(1, newCommentText);
-            statement.setInt(2, commentId);
+            statement.setString(1, newUserName);
+            statement.setString(2, CurrentUser);
             statement.executeUpdate();
         }
     }

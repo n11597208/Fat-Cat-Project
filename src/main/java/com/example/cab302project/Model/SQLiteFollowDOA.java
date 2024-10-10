@@ -43,18 +43,39 @@ public class SQLiteFollowDOA {
             PreparedStatement statement = connection.prepareStatement(
                     "INSERT INTO followers (account,follower) VALUES (?, ?)"
             );
-
             statement.setString(1, account);
             statement.setString(2, follower);
             statement.executeUpdate();
             ResultSet generatedKeys = statement.getGeneratedKeys();
-
-
-
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
+    public void updateAccount(String currentUserName, String newUserName) {
+        try {
+            PreparedStatement statement = connection.prepareStatement(
+                    "UPDATE followers SET account = ? WHERE account = ?"
+            );
+            statement.setString(1, newUserName);
+            statement.setString(2, currentUserName);
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    public void updateFollower(String currentUserName, String newUserName) {
+        try {
+            PreparedStatement statement = connection.prepareStatement(
+                    "UPDATE followers SET follower = ? WHERE follower = ?"
+            );
+            statement.setString(1, newUserName);
+            statement.setString(2, currentUserName);
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public Boolean isFollower(String account, String follower) throws SQLException {
         String query = "SELECT follower FROM followers WHERE account = ? AND follower = ?";
 

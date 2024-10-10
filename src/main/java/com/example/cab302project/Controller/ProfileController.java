@@ -324,4 +324,12 @@ public class ProfileController {
         Scene scene = new Scene(root, HelloApplication.WIDTH, HelloApplication.HEIGHT);
         window.setScene(scene);
     }
+
+    public void pageRedirectSettings(ActionEvent actionEvent) throws IOException {
+        Stage window = (Stage) welcomeText1.getScene().getWindow();
+        FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("EditProfile.fxml"));
+        Parent root = fxmlLoader.load();
+        Scene scene = new Scene(root, HelloApplication.WIDTH, HelloApplication.HEIGHT);
+        window.setScene(scene);
+    }
 }

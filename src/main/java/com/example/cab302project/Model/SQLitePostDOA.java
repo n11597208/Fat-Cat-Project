@@ -103,6 +103,20 @@ public void updatePost(Post post, int postId) throws SQLException {
         }
     }
 }
+    public void updateUserPost(String CurrentUserName, String NewUserName) throws SQLException {
+        String sql = "UPDATE posts SET userId = ? WHERE userId = ?";
+        {
+            try (PreparedStatement statement = connection.prepareStatement(sql)) {
+                statement.setString(1, NewUserName);
+                statement.setString(2, CurrentUserName);
+                statement.executeUpdate();
+
+            } catch (SQLException e) {
+                e.printStackTrace();
+                throw e;
+            }
+        }
+    }
 
 // Deletes the field in the post field that the user is currently interacting with
 //    @Override
@@ -264,6 +278,7 @@ public static Post getPost(int id) {
             System.out.println("Error creating comments table: " + e.getMessage());
         }
     }
+
 
 
 
