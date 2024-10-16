@@ -63,18 +63,18 @@
     </top>
 
     <center>
-        <VBox alignment="TOP_CENTER" spacing="15">
+        <VBox alignment="TOP_CENTER" spacing="15" styleClass="form-box">
 
             <HBox alignment="TOP_CENTER" spacing="15">
                 <Region prefHeight="10"/>
-                <Label fx:id="welcomeText1" text="Find an Account">
+                <Label fx:id="FindLabel" text="Find an Account">
 
                 </Label>
 
                     <TextField fx:id="accountSearchField" promptText="Search Account..."/>
 
 
-                <Button fx:id="search" style="-fx-background-color: #128aff; -fx-pref-width: 200;" text="Search" textAlignment="CENTER" textFill="WHITE"/>
+<!--                <Button fx:id="search" style="-fx-background-color: #128aff; -fx-pref-width: 200;" text="Search" textAlignment="CENTER" textFill="WHITE"/>-->
             </HBox>
             <ListView fx:id="accountListView" prefHeight="150"/>
 

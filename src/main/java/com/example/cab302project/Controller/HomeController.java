@@ -13,6 +13,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
@@ -28,6 +29,7 @@ import java.util.List;
 public class HomeController implements Subject {
     public Button search;
     public ImageView profileImageView;
+    public Label FindLabel;
     @FXML
     private TextField accountSearchField;
     @FXML
@@ -37,27 +39,27 @@ public class HomeController implements Subject {
     private ObservableList<String> accounts = sqLiteUserDOA.getAllUsers(LoginController.Session.getLoggedInUser());
     private ObservableList<String> noSearch = FXCollections.observableArrayList();
 
-    // List to hold all observers
+
     private List<Observer> observers = new ArrayList<>();
 
     public void initialize() throws SQLException {
         accountListView.setItems(noSearch);
 
-        // Add AccountListViewObserver as an observer
+
         addObserver(new AccountListViewObserver(accountListView, accounts));
 
-        // Add listener to search field to notify observers when search term changes
+
         accountSearchField.textProperty().addListener((observable, oldValue, newValue) -> {
-            notifyObservers();  // Notify observers when the search term changes
+            notifyObservers();
         });
 
-        // Set onMouseClicked event listener for the ListView
+
         accountListView.setOnMouseClicked((MouseEvent event) -> {
-            if (event.getClickCount() == 2) { // Double-click
+            if (event.getClickCount() == 2) {
                 String selectedUser = accountListView.getSelectionModel().getSelectedItem();
                 if (selectedUser != null) {
                     try {
-                        // Handle the row click and navigate to the next page
+
                         handleRowClick();
                     } catch (IOException e) {
                         throw new RuntimeException(e);
@@ -66,7 +68,7 @@ public class HomeController implements Subject {
             }
         });
 
-        // Set profile picture for the logged-in user
+
         LoginController.Session session = new LoginController.Session();
         Image image = sqLiteUserDOA.getProfilePicture(session.getLoggedInUser());
         if (image != null) {
@@ -74,17 +76,17 @@ public class HomeController implements Subject {
         }
     }
 
-    // Method to handle the row click event
+
     private void handleRowClick() throws IOException {
         ViewingUser.setSelectedUser(accountListView.getSelectionModel().getSelectedItem());
-        Stage window = (Stage) search.getScene().getWindow();
+        Stage window = (Stage) FindLabel.getScene().getWindow();
         FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("Other_Profile_UI.fxml"));
         Parent root = fxmlLoader.load();
         Scene scene = new Scene(root, HelloApplication.WIDTH, HelloApplication.HEIGHT);
         window.setScene(scene);
     }
 
-    // Subject interface methods
+
     @Override
     public void addObserver(Observer observer) {
         observers.add(observer);
@@ -112,9 +114,9 @@ public class HomeController implements Subject {
         }
     }
 
-    // Redirects user to the home page
+
     public void HomeButton(ActionEvent actionEvent) throws IOException {
-        Stage window = (Stage) search.getScene().getWindow();
+        Stage window = (Stage) FindLabel.getScene().getWindow();
         FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("Home_UI.fxml"));
         Parent root = fxmlLoader.load();
         Scene scene = new Scene(root, HelloApplication.WIDTH, HelloApplication.HEIGHT);
@@ -124,17 +126,17 @@ public class HomeController implements Subject {
     @FXML
     public void logOut() throws IOException {
         LoginController.Session.clearSession();
-        Stage window = (Stage) search.getScene().getWindow();
+        Stage window = (Stage) FindLabel.getScene().getWindow();
         FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("Login_UI.fxml"));
         Parent root = fxmlLoader.load();
         Scene scene = new Scene(root, HelloApplication.WIDTH, HelloApplication.HEIGHT);
         window.setScene(scene);
     }
 
-    // Redirects user to the post creation page
+
     @FXML
     protected void onNextButtonClick() throws IOException {
-        Stage window = (Stage) search.getScene().getWindow();
+        Stage window = (Stage) FindLabel.getScene().getWindow();
         FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("Create_Post.fxml"));
         Parent root = fxmlLoader.load();
         Scene scene = new Scene(root, HelloApplication.WIDTH, HelloApplication.HEIGHT);
@@ -142,7 +144,7 @@ public class HomeController implements Subject {
     }
 
     public void pageRedirect(ActionEvent actionEvent) throws IOException {
-        Stage window = (Stage) search.getScene().getWindow();
+        Stage window = (Stage) FindLabel.getScene().getWindow();
         FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("Profile_UI.fxml"));
         Parent root = fxmlLoader.load();
         Scene scene = new Scene(root, HelloApplication.WIDTH, HelloApplication.HEIGHT);

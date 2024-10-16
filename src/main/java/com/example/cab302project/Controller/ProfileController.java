@@ -142,11 +142,11 @@ public class ProfileController {
         postBox.setAlignment(Pos.CENTER_LEFT);
         postBox.setSpacing(10);
         postBox.setPadding(new Insets(10));
-        postBox.setStyle("-fx-border-color: lightgray; -fx-border-width: 1;");
+        postBox.getStyleClass().add("post-box"); // Add CSS class
 
         ImageView postImageView = new ImageView();
-        postImageView.setFitWidth(150);
-        postImageView.setFitHeight(150);
+        postImageView.setFitWidth(600);
+        postImageView.setFitHeight(400);
         if (post.getPostImage() != null) {
             byte[] imageBytes = post.getPostImage();
             postImageView.setImage(new Image(new ByteArrayInputStream(imageBytes)));

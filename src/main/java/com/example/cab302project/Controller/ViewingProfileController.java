@@ -167,8 +167,8 @@ public class ViewingProfileController {
         postBox.setPadding(new Insets(10));
         postBox.setStyle("-fx-border-color: lightgray; -fx-border-width: 1;");
         ImageView postImageView = new ImageView();
-        postImageView.setFitWidth(150);
-        postImageView.setFitHeight(150);
+        postImageView.setFitWidth(600);
+        postImageView.setFitHeight(400);
         if (post.getPostImage() != null) {
             byte[] imageBytes = post.getPostImage();
             System.out.println("Image size: " + imageBytes.length);

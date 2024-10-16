@@ -60,7 +60,7 @@
     <center>
         <HBox spacing="10" alignment="CENTER">
             <!-- Section taking 25% -->
-            <VBox fx:id="leftSection" HBox.hgrow="ALWAYS" maxWidth="Infinity" alignment="TOP_CENTER" spacing="15">
+            <VBox fx:id="leftSection" HBox.hgrow="ALWAYS" maxWidth="Infinity" alignment="TOP_CENTER" spacing="15" styleClass="form-box">
                 <ImageView fx:id="profileImageView2" fitHeight="100.0" fitWidth="100.0"/>
                 <Label fx:id="welcomeText1" text="Username" style="-fx-font-size: 24px; -fx-font-weight: bold;" alignment="CENTER"/>
 
@@ -84,7 +84,7 @@
             </VBox>
 
 
-            <VBox fx:id="rightSection" HBox.hgrow="ALWAYS" maxWidth="Infinity">
+            <VBox fx:id="rightSection" HBox.hgrow="ALWAYS" maxWidth="Infinity" styleClass="form-box">
 
 
                 <Label fx:id="Post" text="Post" style="-fx-font-size: 24px; -fx-font-weight: bold;"/>

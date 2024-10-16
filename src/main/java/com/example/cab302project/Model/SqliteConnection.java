@@ -6,25 +6,18 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 public class SqliteConnection {
-    // Database URL
+
     private static final String DB_URL = "jdbc:sqlite:database.db";
 
-    // Singleton instance of the connection
+
     private static Connection connection = null;
 
-    // Private constructor to prevent instantiation
     private SqliteConnection() {
     }
 
-    /**
-     * Returns the singleton instance of the SQLite connection.
-     * If it doesn't exist, a new connection is created.
-     *
-     * @return the singleton database connection
-     */
     public static Connection connect() {
         try {
-            if (connection == null || connection.isClosed()) {  // Check if the connection is null or closed
+            if (connection == null || connection.isClosed()) {
                 connection = DriverManager.getConnection(DB_URL);
                 System.out.println("Connection established.");
             }

@@ -73,11 +73,11 @@ public class SQLiteUserDOA {
 
     public ObservableList<String> getAllUsers(String username) {
         String sql = "SELECT username FROM users WHERE username != ?";
-        ObservableList userList = FXCollections.observableArrayList();
+        ObservableList<String> userList = FXCollections.observableArrayList();
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, username);
             try (ResultSet resultSet = statement.executeQuery()) {
-                if (resultSet.next()) {
+                while (resultSet.next()) {
                     userList.add(resultSet.getString("username"));
                 }
             }
@@ -86,6 +86,7 @@ public class SQLiteUserDOA {
         }
         return userList;
     }
+
 
     public void incrementFollowers(String username, String follower, Integer amount) {
         String selectQuery = "SELECT followers FROM users WHERE username = ?";

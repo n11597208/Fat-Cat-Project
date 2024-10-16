@@ -14,72 +14,49 @@
 <?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.text.Font?>
 
-<VBox alignment="CENTER" spacing="20.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.cab302project.Controller.RegisterController">
+<VBox alignment="CENTER" spacing="20.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.cab302project.Controller.RegisterController" stylesheets="@styles.css">
     <padding>
         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
     </padding>
 
-    <HBox fillHeight="false" maxWidth="-Infinity" minWidth="-Infinity" prefHeight="145.0" prefWidth="500.0">
-        <children>
-            <Rectangle arcHeight="5.0" arcWidth="5.0" height="145.0" stroke="BLACK" strokeType="INSIDE" width="175.0" />
-            <ImageView fitHeight="145.0" fitWidth="175.0" pickOnBounds="true" preserveRatio="true">
-                <image>
-                    <Image url="@../../../Image_assets/logo.png" />
-                </image>
-            </ImageView>
-            <Rectangle arcHeight="5.0" arcWidth="5.0" height="145.0" stroke="BLACK" strokeType="INSIDE" width="180.0" />
-        </children>
-        <VBox.margin>
-            <Insets left="-20.0" right="-20.0" top="-22.0" />
-        </VBox.margin>
-    </HBox>
+    <!-- Header Image -->
+    <ImageView fitHeight="240.0" fitWidth="480.0" pickOnBounds="true" preserveRatio="true">
+        <image>
+            <Image url="@../../../Image_assets/Logo_black.png" />
+        </image>
+    </ImageView>
 
-    <Label text="Sign Up">
-        <font>
-            <Font name="System Bold" size="18.0" />
-        </font>
-        <VBox.margin>
-            <Insets bottom="-20.0" left="-400.0" top="20.0" />
-        </VBox.margin>
-    </Label>
+    <!-- Form Section -->
+    <VBox alignment="BOTTOM_CENTER" spacing="20.0" styleClass="form-box" prefHeight="470" prefWidth="450" maxWidth="450">
+        <!-- Sign Up Label -->
+        <Label text="Sign up" styleClass="form-title" />
 
-    <TextField fx:id="firstnameTextField" promptText="First Name" />
-    <TextField fx:id="lastnameTextField" promptText="Last Name" />
-    <TextField fx:id="emailTextField" promptText="Email" />
-    <TextField fx:id="usernameTextField" promptText="Username" />
-    <TextField fx:id="descriptionTextField" promptText="Enter Profile Description" />
-    <PasswordField fx:id="setpasswordField" promptText="Password" />
-    <PasswordField fx:id="confirmPasswordField" promptText="Confirm Password" />
+        <!-- First Name and Last Name -->
+        <HBox spacing="30.0">
+            <TextField fx:id="firstnameTextField" promptText="First Name" prefWidth="200.0"/>
+            <TextField fx:id="lastnameTextField" promptText="Last Name" prefWidth="200.0"/>
+        </HBox>
 
-    <Button fx:id="uploadButton" text="Upload Profile Picture" onAction="#handleUploadFile" />
+        <!-- Email Field -->
+        <TextField fx:id="emailTextField" promptText="Email" prefWidth="300.0"/>
 
-    <Button fx:id="registerButton" onAction="#registerButtonOnAction" style="-fx-background-color: #128aff; -fx-pref-width: 200;" text="Register" textAlignment="CENTER" textFill="WHITE">
-        <font>
-            <Font size="18.0" />
-        </font>
-        <cursor>
-            <Cursor fx:constant="DEFAULT" />
-        </cursor>
-        <effect>
-            <DropShadow height="5.0" radius="2.0" width="5.0" />
-        </effect>
-        <VBox.margin>
-            <Insets top="20.0" />
-        </VBox.margin>
-    </Button>
+        <!-- Username Field -->
+        <TextField fx:id="usernameTextField" promptText="Username" prefWidth="300.0"/>
+        <TextField fx:id="descriptionTextField" promptText="Description" prefWidth="300.0"/>
 
-    <Button fx:id="closeButton" onAction="#closeButtonOnAction" style="-fx-background-color: #128aff; -fx-pref-width: 200;" text="Login" textAlignment="CENTER" textFill="WHITE">
-        <font>
-            <Font size="18.0" />
-        </font>
-        <effect>
-            <DropShadow height="5.0" radius="2.0" width="5.0" />
-        </effect>
-        <VBox.margin>
-            <Insets top="10.0" />
-        </VBox.margin>
-    </Button>
+        <!-- Password Fields -->
+        <PasswordField fx:id="setpasswordField" promptText="Password" prefWidth="300.0"/>
+        <PasswordField fx:id="confirmPasswordField" promptText="Confirm Password" prefWidth="300.0"/>
 
-    <Label fx:id="registrationMessageLabel" textAlignment="CENTER" textFill="#28da8a94" />
-    <Label fx:id="confirmPasswordLabel" textAlignment="CENTER" textFill="#c3101094" />
+        <!-- Upload Button -->
+        <Button fx:id="uploadButton" text="Upload Profile Picture" onAction="#handleUploadFile" maxWidth="200"  />
+
+        <!-- Register and Login Buttons -->
+        <Button fx:id="registerButton" onAction="#registerButtonOnAction" styleClass="signup-button" text="Sign up" textAlignment="CENTER" />
+        <Button fx:id="closeButton" onAction="#closeButtonOnAction" styleClass="login-button" text="Log in" textAlignment="CENTER" />
+    </VBox>
+
+    <!-- Status Messages -->
+    <Label fx:id="registrationMessageLabel" textAlignment="CENTER" />
+    <Label fx:id="confirmPasswordLabel" textAlignment="CENTER" />
 </VBox>
