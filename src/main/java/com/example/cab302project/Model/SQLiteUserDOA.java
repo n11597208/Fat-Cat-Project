@@ -10,17 +10,29 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+/**
+ * The SQLiteUserDOA class provides methods to interact with the SQLite database for managing user information.
+ * This includes retrieving user details, profile pictures, all users, and updating follower counts.
+ */
 public class SQLiteUserDOA {
     private static Connection connection;
 
-
+    /**
+     * Constructor for SQLiteUserDOA. It initializes the database connection.
+     */
     public SQLiteUserDOA() {
         connection = SqliteConnection.connect();
     }
 
+    /**
+     * Retrieves the profile picture of a user by their username.
+     *
+     * @param username The username of the user.
+     * @return The profile picture of the user as an Image object, or null if not found.
+     */
     public Image getProfilePicture(String username) {
-        String sql = "SELECT profilePicture FROM users WHERE username = ?"; // Use the correct column name
-        Image image = null; // Local variable
+        String sql = "SELECT profilePicture FROM users WHERE username = ?";
+        Image image = null;
 
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, username);
@@ -28,21 +40,26 @@ public class SQLiteUserDOA {
                 if (resultSet.next()) {
                     InputStream inputStream = resultSet.getBinaryStream("profilePicture");
                     if (inputStream != null) {
-                        // Convert InputStream to Image
                         image = new Image(inputStream);
                     }
                 }
-
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
-        return image; // Returns null if not found
+        return image;
     }
 
+    /**
+     * Retrieves user details from the database by their username.
+     *
+     * @param username The username of the user.
+     * @return A User object containing the user's details, or null if the user is not found.
+     * @throws SQLException If a database access error occurs.
+     */
     public User getUser(String username) throws SQLException {
-        String sql = "SELECT * FROM users WHERE username = ?"; // Use the correct column name
+        String sql = "SELECT * FROM users WHERE username = ?";
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, username);
             try (ResultSet resultSet = statement.executeQuery()) {
@@ -56,21 +73,21 @@ public class SQLiteUserDOA {
                     Integer numberOfPosts = resultSet.getInt("numberOfPosts");
                     String description = resultSet.getString("description");
 
-
-                    User user = new User(userID, firstName, lastName, email, userName, followers, numberOfPosts, description);
-                    return user;
-
+                    return new User(userID, firstName, lastName, email, userName, followers, numberOfPosts, description);
                 }
             } catch (SQLException ex) {
                 throw new RuntimeException(ex);
             }
-
         }
-
-
-        return null; // Returns null if not found
+        return null;
     }
 
+    /**
+     * Retrieves a list of all users from the database, excluding the given username.
+     *
+     * @param username The username to be excluded from the list.
+     * @return An ObservableList of usernames.
+     */
     public ObservableList<String> getAllUsers(String username) {
         String sql = "SELECT username FROM users WHERE username != ?";
         ObservableList<String> userList = FXCollections.observableArrayList();
@@ -87,7 +104,13 @@ public class SQLiteUserDOA {
         return userList;
     }
 
-
+    /**
+     * Increments or decrements the number of followers of a user.
+     *
+     * @param username The username of the user whose followers count is to be updated.
+     * @param follower The username of the follower (not used directly in the method).
+     * @param amount   The amount by which to increment or decrement the follower count (positive or negative value).
+     */
     public void incrementFollowers(String username, String follower, Integer amount) {
         String selectQuery = "SELECT followers FROM users WHERE username = ?";
         String updateQuery = "UPDATE users SET followers = ? WHERE username = ?";
@@ -99,7 +122,6 @@ public class SQLiteUserDOA {
                     int followers = resultSet.getInt("followers");
                     followers += amount;
 
-                    // Update the followers count
                     try (PreparedStatement updateStatement = connection.prepareStatement(updateQuery)) {
                         updateStatement.setInt(1, followers);
                         updateStatement.setString(2, username);
@@ -111,6 +133,4 @@ public class SQLiteUserDOA {
             throw new RuntimeException("Error incrementing followers: " + e.getMessage(), e);
         }
     }
-
 }
-

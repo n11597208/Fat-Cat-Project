@@ -5,16 +5,24 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+/**
+ * The SqliteConnection class manages the connection to the SQLite database.
+ * It provides methods to establish a connection, set up the database, and close the connection.
+ */
 public class SqliteConnection {
 
     private static final String DB_URL = "jdbc:sqlite:database.db";
-
-
     private static Connection connection = null;
 
+    // Private constructor to prevent instantiation
     private SqliteConnection() {
     }
 
+    /**
+     * Establishes a connection to the SQLite database.
+     *
+     * @return the established Connection object, or null if the connection failed.
+     */
     public static Connection connect() {
         try {
             if (connection == null || connection.isClosed()) {
@@ -40,8 +48,7 @@ public class SqliteConnection {
                     lastName TEXT NOT NULL,
                     email TEXT NOT NULL,        
                     username TEXT NOT NULL UNIQUE,
-                    password TEXT NOT NULL,                                            
-
+                    password TEXT NOT NULL,
                     followers INTEGER NOT NULL,
                     numberOfPosts INTEGER NOT NULL,
                     profilePicture BLOB NULL,
@@ -62,7 +69,6 @@ public class SqliteConnection {
             // Insert a sample user
             stmt.execute(insertSampleUserSQL);
             System.out.println("Database setup completed and sample user added.");
-
         } catch (SQLException e) {
             System.out.println("Error setting up database: " + e.getMessage());
         }

@@ -9,15 +9,24 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * The SQLitePostDAO class provides methods to interact with the SQLite database for managing posts.
+ * This includes creating the posts table, adding, updating, deleting posts, and retrieving posts by ID or author.
+ */
 public class SQLitePostDOA {
     private static Connection connection;
 
-
+    /**
+     * Constructor for SQLitePostDAO. It initializes the database connection and creates the posts table if it doesn't exist.
+     */
     public SQLitePostDOA() {
         connection = SqliteConnection.connect();
         createTable();
     }
 
+    /**
+     * Enables foreign key support in SQLite.
+     */
     private void enableForeignKeys() {
         try {
             Statement statement = connection.createStatement();
@@ -26,7 +35,10 @@ public class SQLitePostDOA {
             e.printStackTrace();
         }
     }
-// Method to create posts table in database with all of the relevant fields and their data types
+
+    /**
+     * Creates the posts table in the SQLite database with relevant fields and data types.
+     */
     public void createTable() {
         try {
             Statement statement = connection.createStatement();
@@ -49,17 +61,22 @@ public class SQLitePostDOA {
             e.printStackTrace();
         }
     }
-// Method to add new post. Takes a post and username of poster as parameters and inserts post details with the post author in the posts table
+
+    /**
+     * Adds a new post to the database. The post details and author username are inserted into the posts table.
+     *
+     * @param post     The Post object containing post details.
+     * @param userName The username of the post author.
+     */
     public void addPost(Post post, String userName) {
         try {
             PreparedStatement statement = connection.prepareStatement(
                     "INSERT INTO posts (userId, postTitle, postDescription, carMake, carModel, postLocation, postImage, rating, numberOfComments, numberOfShares) VALUES (?, ?, ?, ?, ?, ?, ?,?,?,?)",
                     Statement.RETURN_GENERATED_KEYS
             );
-            if (post.getTitle() == "" || post.getDescription() == "" || post.getMake() == "" || post.getModel() == "" || post.getLocation() == "") {
+            if (post.getTitle().isEmpty() || post.getDescription().isEmpty() || post.getMake().isEmpty() || post.getModel().isEmpty() || post.getLocation().isEmpty()) {
                 return;
-            }
-            else {
+            } else {
                 statement.setString(1, userName);
                 statement.setString(2, post.getTitle());
                 statement.setString(3, post.getDescription());
@@ -80,37 +97,27 @@ public class SQLitePostDOA {
             throw new RuntimeException(e);
         }
     }
-//    @Override
-    //Takes user inputs and updates post field where post id is the current post the user is interacting in
-public void updatePost(Post post, int postId) throws SQLException {
-    String sql = "UPDATE posts SET postTitle = ?, postDescription = ?, carMake = ?, carModel = ?, postLocation = ? WHERE id = ?";
-    if (post.getTitle() == "" || post.getDescription() == "" || post.getMake() == "" || post.getModel() == "" || post.getLocation() == "") {
-        return;
-    }
-    else {
-        try (PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setString(1, post.getTitle());
-            statement.setString(2, post.getDescription());
-            statement.setString(3, post.getMake());
-            statement.setString(4, post.getModel());
-            statement.setString(5, post.getLocation());
-            statement.setInt(6, postId);
-            statement.executeUpdate();
 
-        } catch (SQLException e) {
-            e.printStackTrace();
-            throw e;
-        }
-    }
-}
-    public void updateUserPost(String CurrentUserName, String NewUserName) throws SQLException {
-        String sql = "UPDATE posts SET userId = ? WHERE userId = ?";
-        {
+    /**
+     * Updates the details of an existing post in the database, identified by post ID.
+     *
+     * @param post   The Post object with updated information.
+     * @param postId The ID of the post to be updated.
+     * @throws SQLException If there is a database access error or other errors.
+     */
+    public void updatePost(Post post, int postId) throws SQLException {
+        String sql = "UPDATE posts SET postTitle = ?, postDescription = ?, carMake = ?, carModel = ?, postLocation = ? WHERE id = ?";
+        if (post.getTitle().isEmpty() || post.getDescription().isEmpty() || post.getMake().isEmpty() || post.getModel().isEmpty() || post.getLocation().isEmpty()) {
+            return;
+        } else {
             try (PreparedStatement statement = connection.prepareStatement(sql)) {
-                statement.setString(1, NewUserName);
-                statement.setString(2, CurrentUserName);
+                statement.setString(1, post.getTitle());
+                statement.setString(2, post.getDescription());
+                statement.setString(3, post.getMake());
+                statement.setString(4, post.getModel());
+                statement.setString(5, post.getLocation());
+                statement.setInt(6, postId);
                 statement.executeUpdate();
-
             } catch (SQLException e) {
                 e.printStackTrace();
                 throw e;
@@ -118,18 +125,47 @@ public void updatePost(Post post, int postId) throws SQLException {
         }
     }
 
-// Deletes the field in the post field that the user is currently interacting with
-//    @Override
+    /**
+     * Updates the userID of all posts authored by a given user.
+     *
+     * @param CurrentUserName The current username of the user.
+     * @param NewUserName     The new username of the user.
+     * @throws SQLException If there is a database access error or other errors.
+     */
+    public void updateUserPost(String CurrentUserName, String NewUserName) throws SQLException {
+        String sql = "UPDATE posts SET userId = ? WHERE userId = ?";
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, NewUserName);
+            statement.setString(2, CurrentUserName);
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+    /**
+     * Deletes a post from the database, identified by post ID.
+     *
+     * @param postId The ID of the post to be deleted.
+     */
     public void deletePost(Integer postId) {
         try {
             PreparedStatement statement = connection.prepareStatement("DELETE FROM posts WHERE id = ?");
-            statement.setInt(1,postId);
+            statement.setInt(1, postId);
             statement.executeUpdate();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-    //gets the number of posts that a user has created requires the users username
+
+    /**
+     * Returns the number of posts authored by a given user.
+     *
+     * @param userName The username of the user.
+     * @return The number of posts authored by the user.
+     * @throws SQLException If there is a database access error or other errors.
+     */
     public int getNumPosts(String userName) throws SQLException {
         int numPosts = 0;
         PreparedStatement statement = connection.prepareStatement("SELECT COUNT(*) FROM posts WHERE userID = ?");
@@ -142,6 +178,12 @@ public void updatePost(Post post, int postId) throws SQLException {
         statement.close();
         return numPosts;
     }
+
+    /**
+     * Increments the number of comments for a post.
+     *
+     * @param postId The ID of the post.
+     */
     public void incrementFollowers(Integer postId) {
         String selectQuery = "SELECT numberOfComments FROM posts WHERE id = ?";
         String updateQuery = "UPDATE posts SET numberOfComments = ? WHERE id = ?";
@@ -165,11 +207,18 @@ public void updatePost(Post post, int postId) throws SQLException {
             throw new RuntimeException("Error incrementing followers: " + e.getMessage(), e);
         }
     }
+
+    /**
+     * Retrieves the number of comments for a post.
+     *
+     * @param postId The ID of the post.
+     * @return The number of comments on the post.
+     */
     public Integer getFollowers(Integer postId) {
         String selectQuery = "SELECT numberOfComments FROM posts WHERE id = ?";
         try (PreparedStatement selectStatement = connection.prepareStatement(selectQuery)) {
             selectStatement.setInt(1, postId);
-            try (ResultSet rs = selectStatement.executeQuery()) {  // Directly use the returned ResultSet
+            try (ResultSet rs = selectStatement.executeQuery()) {
                 int comments = 0;
                 if (rs.next()) {
                     comments = rs.getInt("numberOfComments");
@@ -181,9 +230,13 @@ public void updatePost(Post post, int postId) throws SQLException {
         }
     }
 
-
-    //returns all of the post information for a specified post id
-public static Post getPost(int id) {
+    /**
+     * Retrieves a post by its ID from the database.
+     *
+     * @param id The ID of the post.
+     * @return The Post object if found, otherwise null.
+     */
+    public static Post getPost(int id) {
         String sql = "SELECT * FROM posts WHERE id = ?";
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setInt(1, id);
@@ -211,16 +264,19 @@ public static Post getPost(int id) {
         }
         return null;
     }
-// returns a list of all of the posts created by a user
+
+    /**
+     * Retrieves all posts authored by a given user.
+     *
+     * @param author The username of the author.
+     * @return A list of posts authored by the user.
+     */
     public static List<Post> getPostsByAuthor(String author) {
         List<Post> posts = new ArrayList<>();
-
         try {
             PreparedStatement statement = connection.prepareStatement("SELECT * FROM posts WHERE userId = ?");
             statement.setString(1, author);
             ResultSet resultSet = statement.executeQuery();
-
-
             while (resultSet.next()) {
                 Integer postId = resultSet.getInt("id");
                 String title = resultSet.getString("postTitle");
@@ -233,21 +289,24 @@ public static Post getPost(int id) {
                 Integer numberComments = resultSet.getInt("numberOfComments");
                 Integer numberShares = resultSet.getInt("numberOfShares");
 
-
                 Post post = new Post(title, description, author, make, model, location, imageBytes, rating, numberComments, numberShares);
                 post.setId(postId);
-
                 posts.add(post);
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-
         return posts;
     }
-    public void incrementFollowers(String username){
+
+    /**
+     * Increments the followers count for a user.
+     *
+     * @param username The username of the user.
+     */
+    public void incrementFollowers(String username) {
         try {
-            PreparedStatement statement = connection.prepareStatement("SELECT * followers FROM user WHERE userID = ?");
+            PreparedStatement statement = connection.prepareStatement("SELECT followers FROM user WHERE userID = ?");
             statement.setString(1, username);
             ResultSet resultSet = statement.executeQuery();
             if (resultSet.next()) {
@@ -256,13 +315,16 @@ public static Post getPost(int id) {
                 PreparedStatement statement2 = connection.prepareStatement("UPDATE followers SET followers = ? WHERE userID = ?");
                 statement2.setInt(1, followers);
                 statement2.setString(2, username);
+                statement2.executeUpdate();
             }
-
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
 
+    /**
+     * Creates the comments table in the SQLite database.
+     */
     public void commentTable() {
         String sql = "CREATE TABLE IF NOT EXISTS comments (" +
                 "commentId INTEGER PRIMARY KEY AUTOINCREMENT," +
@@ -278,9 +340,4 @@ public static Post getPost(int id) {
             System.out.println("Error creating comments table: " + e.getMessage());
         }
     }
-
-
-
-
 }
-

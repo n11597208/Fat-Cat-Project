@@ -57,7 +57,8 @@ public class PostDOATest {
 
     @Test
     public void testAddPost() {
-        Post post = new Post("Test Title", "Test Description", "admin","Ford", "Mustang", "Location", null, 0, 0, 0);
+        Post post = new Post("Test Title", "Test Description", "admin",
+                "Ford", "Mustang", "Location", null, 0, 0, 0);
         postDAO.addPost(post, "admin");
 
         try {

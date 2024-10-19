@@ -6,15 +6,26 @@ import java.util.List;
 import java.time.LocalDateTime;  // Import LocalDateTime
 import java.time.format.DateTimeFormatter; // Import DateTimeFormatter
 
+/**
+ * The SQLiteCommentDAO class provides methods to manage comments in the database,
+ * including creating the comments table, adding comments, retrieving comments by post ID,
+ * deleting comments, and updating comment authors.
+ */
 public class SQLiteCommentDAO {
     private Connection connection;
 
+    /**
+     * Constructor for SQLiteCommentDAO. Initializes the database connection
+     * and creates the comments table if it doesn't already exist.
+     */
     public SQLiteCommentDAO() {
         connection = SqliteConnection.connect(); // Assuming you have a method to establish a connection
         createCommentTable(); // Create comments table if it doesn't exist
     }
 
-    // Method to create comments table in the database
+    /**
+     * Creates the 'comments' table in the database if it does not already exist.
+     */
     public void createCommentTable() {
         String sql = "CREATE TABLE IF NOT EXISTS comments (" +
                 "commentId INTEGER PRIMARY KEY AUTOINCREMENT," +
@@ -22,7 +33,7 @@ public class SQLiteCommentDAO {
                 "commentText TEXT NOT NULL," +
                 "timestamp TEXT NOT NULL," +
                 "author TEXT NOT NULL," +
-                "FOREIGN KEY(postId) REFERENCES posts(id)" +
+                "FOREIGN KEY(postId) REFERENCES posts(id)," +
                 "FOREIGN KEY(author) REFERENCES users(username)" +
                 ");";
         try (Statement stmt = connection.createStatement()) {
@@ -32,8 +43,13 @@ public class SQLiteCommentDAO {
         }
     }
 
-    // Method to add a new comment to a post
-    public void addComment( Comment comment) throws SQLException {
+    /**
+     * Adds a new comment to a post.
+     *
+     * @param comment The Comment object containing the details of the comment to be added.
+     * @throws SQLException If there is an error executing the insert operation.
+     */
+    public void addComment(Comment comment) throws SQLException {
         String sql = "INSERT INTO comments (postId, commentText, timestamp, author) VALUES (?, ?, ?, ?)";
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setInt(1, comment.getPostId());
@@ -44,7 +60,13 @@ public class SQLiteCommentDAO {
         }
     }
 
-    // Method to get comments by post ID
+    /**
+     * Retrieves comments for a specific post by its ID.
+     *
+     * @param postId The ID of the post for which comments are to be retrieved.
+     * @return A list of Comment objects associated with the specified post ID.
+     * @throws SQLException If there is an error executing the query.
+     */
     public List<Comment> getCommentsByPostId(int postId) throws SQLException {
         List<Comment> comments = new ArrayList<>();
         String sql = "SELECT * FROM comments WHERE postId = ?";
@@ -56,14 +78,19 @@ public class SQLiteCommentDAO {
                     String commentText = resultSet.getString("commentText");
                     String timestamp = resultSet.getString("timestamp");
                     String author = resultSet.getString("author");
-                    comments.add(new Comment( postId, commentText, timestamp, author) ); // Adjust constructor as needed
+                    comments.add(new Comment(postId, commentText, timestamp, author)); // Adjust constructor as needed
                 }
             }
         }
         return comments;
     }
 
-    // Method to delete a comment by ID
+    /**
+     * Deletes a comment from the database by its ID.
+     *
+     * @param commentId The ID of the comment to be deleted.
+     * @throws SQLException If there is an error executing the delete operation.
+     */
     public void deleteComment(int commentId) throws SQLException {
         String sql = "DELETE FROM comments WHERE commentId = ?";
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -72,7 +99,13 @@ public class SQLiteCommentDAO {
         }
     }
 
-    // Optional: Method to update a comment by ID
+    /**
+     * Updates the author of a comment by the current author's username.
+     *
+     * @param CurrentUser The current username of the author whose comments are to be updated.
+     * @param newUserName The new username to replace the current author.
+     * @throws SQLException If there is an error executing the update operation.
+     */
     public void updateCommentUser(String CurrentUser, String newUserName) throws SQLException {
         String sql = "UPDATE comments SET author = ? WHERE author = ?";
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
