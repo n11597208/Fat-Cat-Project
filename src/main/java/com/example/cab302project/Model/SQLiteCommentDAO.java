@@ -114,4 +114,24 @@ public class SQLiteCommentDAO {
             statement.executeUpdate();
         }
     }
+    public Integer getNumComments(int postID) {
+        String sql = "SELECT COUNT(*) FROM comments WHERE postId = ?";
+        Integer numComments = null;
+
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            pstmt.setInt(1, postID);
+
+            // Directly assign the ResultSet to `rs`
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    numComments = rs.getInt(1); // Get the first column (AVG result)
+                    return numComments;
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Error retrieving post rating", e);
+        }
+
+        return 0;  // Return 0 if no rating found
+    }
 }

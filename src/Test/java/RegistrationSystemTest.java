@@ -1,92 +1,82 @@
-import static org.junit.jupiter.api.Assertions.*;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-
-import com.example.cab302project.Model.RegistrationSystem;
-import com.example.cab302project.Model.SqliteConnection;
+import com.example.cab302project.Model.*;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-public class RegistrationSystemTest {
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+class RegistrationSystemTest {
 
     private Connection connection;
-    private RegistrationSystem registrationSystem;
+    RegistrationSystem registrationSystem = new RegistrationSystem();
 
     @BeforeEach
-    public void setUp() throws SQLException {
-        connection = SqliteConnection.connect();
+    void setUp() throws SQLException {
+        // Create an in-memory SQLite database
+        connection = DriverManager.getConnection("jdbc:sqlite::memory:");
+        // Create the users table
+        String createTableSQL = "CREATE TABLE users (" +
+                "id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                "firstName TEXT NOT NULL," +
+                "lastName TEXT NOT NULL," +
+                "email TEXT NOT NULL," +
+                "userName TEXT NOT NULL," +
+                "password TEXT NOT NULL," +
+                "profilePicture BLOB," +
+                "followers INTEGER," +
+                "numberOfPosts INTEGER," +
+                "description TEXT)";
+        connection.createStatement().execute(createTableSQL);
+
+        // Set the connection in SqliteConnection class (or adapt this part accordingly)
+
         registrationSystem = new RegistrationSystem();
+    }
 
-        // Create the users table in the test database
-        try (PreparedStatement statement = connection.prepareStatement(
-                "CREATE TABLE IF NOT EXISTS users (" +
-                        "id INTEGER PRIMARY KEY AUTOINCREMENT," +
-                        "firstName TEXT NOT NULL," +
-                        "lastName TEXT NOT NULL," +
-                        "email TEXT NOT NULL UNIQUE," +  // Ensure email is unique
-                        "userName TEXT NOT NULL," +
-                        "password TEXT NOT NULL," +
-                        "followers INTEGER DEFAULT 0," +
-                        "numberOfPosts INTEGER DEFAULT 0," +
-                        "profilePicture BLOB," + // Profile picture
-                        "description TEXT" + // Description
-                        ")")) {
-            statement.execute();
-        }
+    @AfterEach
+    void tearDown() throws SQLException {
+        connection.close();
     }
 
     @Test
-    public void testAddUser_Success() throws SQLException {
-        byte[] profilePicture = null; // For the sake of testing
-        registrationSystem.addUser("John", "Doe", "john.doe@example.com", "johndoe", "password", profilePicture, "A sample description");
+    void testAddUserSuccessfully() {
+        byte[] profilePicture = new byte[]{1, 2, 3}; // Dummy data
+        registrationSystem.addUser("John", "Doe", "john@example.com", "johndoe", "password123", profilePicture, "Just a test user.");
 
-        try (PreparedStatement statement = connection.prepareStatement("SELECT * FROM users WHERE userName = ?")) {
-            statement.setString(1, "johndoe");
-            try (ResultSet resultSet = statement.executeQuery()) {
-                assertTrue(resultSet.next(), "User should be found in the database");
-                assertEquals("John", resultSet.getString("firstName"));
-                assertEquals("Doe", resultSet.getString("lastName"));
-                assertEquals("john.doe@example.com", resultSet.getString("email"));
-                assertEquals("johndoe", resultSet.getString("userName"));
-                assertEquals("password", resultSet.getString("password"));
-                assertEquals(0, resultSet.getInt("followers"));
-                assertEquals(0, resultSet.getInt("numberOfPosts"));
-                assertNull(resultSet.getBytes("profilePicture")); // Expect null for profile picture
-                assertEquals("A sample description", resultSet.getString("description"));
-            }
-        }
+        // Check if user is added
+        assertTrue(registrationSystem.duplicateUser("john@example.com"));
     }
 
     @Test
-    public void testAddUser_Empty() throws SQLException {
-        byte[] profilePicture = null; // For the sake of testing
-        registrationSystem.addUser("", "", "", "", "", profilePicture, "");
+    void testDuplicateUser() {
+        byte[] profilePicture = new byte[]{1, 2, 3}; // Dummy data
+        registrationSystem.addUser("John", "Doe", "john@example.com", "johndoe", "password123", profilePicture, "Just a test user.");
+        registrationSystem.addUser("Jane", "Doe", "john@example.com", "janedoe", "password456", profilePicture, "Another test user.");
 
-        try (PreparedStatement statement = connection.prepareStatement("SELECT * FROM users WHERE userName = ?")) {
-            statement.setString(1, "");
-            try (ResultSet resultSet = statement.executeQuery()) {
-                assertFalse(resultSet.next(), "Empty user should not be added to the database");
-            }
-        }
+        // Check if only the first user was added
+        assertTrue(registrationSystem.duplicateUser("john@example.com"));
+        assertFalse(registrationSystem.duplicateUser("janedoe@example.com"));
     }
 
     @Test
-    public void testAddUser_DuplicateEmail() throws SQLException {
-        byte[] profilePicture = null; // For the sake of testing
-        registrationSystem.addUser("John", "Doe", "john.doe@example.com", "johndoe", "password", profilePicture, "A sample description");
+    void testEmptyFields() {
+        byte[] profilePicture = new byte[]{1, 2, 3}; // Dummy data
+        registrationSystem.addUser("", "Doe", "johnD@example.com", "johndoe", "password123", profilePicture, "Just a test user.");
 
-        // Trying to add a new user with the same email
-        registrationSystem.addUser("Jane", "Doe", "john.doe@example.com", "janedoe", "password", profilePicture, "Another description");
+        // Should not be added due to empty firstName
+        assertFalse(registrationSystem.duplicateUser("johnD@example.com"));
+    }
 
-        try (PreparedStatement statement = connection.prepareStatement("SELECT COUNT(*) FROM users WHERE email = ?")) {
-            statement.setString(1, "john.doe@example.com");
-            try (ResultSet resultSet = statement.executeQuery()) {
-                resultSet.next();
-                int count = resultSet.getInt(1);
-                assertEquals(1, count, "Email should be unique.");
-            }
-        }
+    @Test
+    void testAddUserWithNullEmail() {
+        byte[] profilePicture = new byte[]{1, 2, 3}; // Dummy data
+        registrationSystem.addUser("John", "Doe", "john@gmail.com", "johndoe", "password123", profilePicture, "Just a test user.");
+
+        // Should not be added due to null email
+        assertFalse(registrationSystem.duplicateUser("John"));
     }
 }

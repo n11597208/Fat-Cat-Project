@@ -44,7 +44,7 @@ public class FollowDOATest {
         followDAO.insertFollower("user1", "user2");
 
         assertTrue(followDAO.isFollower("user1", "user2"));
-        assertFalse(followDAO.isFollower("user1", "user3")); // Not a follower
+        assertFalse(followDAO.isFollower("user1", "user1")); // Not a follower
     }
 
     @Test

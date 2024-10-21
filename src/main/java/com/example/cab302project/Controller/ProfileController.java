@@ -30,6 +30,7 @@ public class ProfileController {
     public MenuItem logout;
     public ImageView profileImageView2;
     public Text descriptionText;
+
     @FXML
     private VBox postsContainer;
 
@@ -67,6 +68,7 @@ public class ProfileController {
     SQLitePostDOA sqLitePostDOA = new SQLitePostDOA();
     SQLiteUserDOA sqLiteUserDOA = new SQLiteUserDOA();
     SQLiteCommentDAO sqLiteCommentDAO = new SQLiteCommentDAO();
+    SQLiteRatingDOA sqLiteRatingDOA = new SQLiteRatingDOA();
 
     private LoginController.Session session;
     public static int id;
@@ -85,8 +87,8 @@ public class ProfileController {
         leftSection.sceneProperty().addListener((observable, oldScene, newScene) -> {
             if (newScene != null) {
                 // Bind the width properties to maintain 25%-75% ratio
-                leftSection.prefWidthProperty().bind(newScene.widthProperty().multiply(0.25));
-                rightSection.prefWidthProperty().bind(newScene.widthProperty().multiply(0.75));
+                leftSection.prefWidthProperty().bind(newScene.widthProperty().multiply(0.4));
+                rightSection.prefWidthProperty().bind(newScene.widthProperty().multiply(0.6));
             }
         });
         session = new LoginController.Session();
@@ -160,18 +162,67 @@ public class ProfileController {
         HBox detailsBox = new HBox();
         detailsBox.setAlignment(Pos.CENTER_LEFT);
         detailsBox.setSpacing(10);
-        Label ratingLabel = new Label("Rating: " + post.getRating());
-        Button commentButton = new Button("Comments: " + sqLitePostDOA.getFollowers(post.getId()));
+        Button ratingButton = new Button("Rating: " + sqLiteRatingDOA.getPostRating(post.getId()));
+        ratingButton.setOnAction(e -> {
+            // Prompt the user for a comment
+            TextInputDialog ratingDialog = new TextInputDialog();
+            ratingDialog.setTitle("Add Rating");
+            ratingDialog.setHeaderText(null);
+            ratingDialog.setContentText("Enter your rating:");
+
+            // Show the dialog and capture the user's input
+            Optional<String> ratingResult = ratingDialog.showAndWait();
+            ratingResult.ifPresent(rating -> {
+                if (rating.trim().isEmpty()) {
+                    // Show a warning if the comment is empty
+                    Alert emptyAlert = new Alert(Alert.AlertType.WARNING);
+                    emptyAlert.setTitle("Warning");
+                    emptyAlert.setHeaderText(null);
+                    emptyAlert.setContentText("Comment cannot be empty!");
+                    emptyAlert.showAndWait();
+                } else {
+                    Rating newRating = new Rating( LoginController.Session.getLoggedInUser(), Float.parseFloat(rating), post.getId() );                    try {
+                        sqLiteRatingDOA.addRating(newRating);
+                        sqLitePostDOA.incrementFollowers(post.getId());
+                    } catch (SQLException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                    Stage window = (Stage) welcomeText1.getScene().getWindow();
+                    FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("ProfileController.fxml"));
+                    Parent root = null;
+                    try {
+                        root = fxmlLoader.load();
+                    } catch (IOException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                    Scene scene = new Scene(root, HelloApplication.WIDTH, HelloApplication.HEIGHT);
+                    window.setScene(scene);
+
+//                    // Add the comment to the commentsBox
+//                    Label commentLabel = new Label(comment);
+//                    commentLabel.setWrapText(true); // Wrap text for long comments
+//                    commentsBox.getChildren().add(commentLabel);
+                }
+            });
+        });
+        Button commentButton = new Button("Comments: " + sqLiteCommentDAO.getNumComments(post.getId()));
         commentButton.setOnAction(e -> {
+            int id = post.getId();
+            setId(id);
+            Stage window = (Stage) welcomeText1.getScene().getWindow();
+            FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("Comment_Section_UI.fxml"));
+            Parent root = null;
             try {
-                displayComments(post);
-            } catch (SQLException ex) {
+                root = fxmlLoader.load();
+            } catch (IOException ex) {
                 throw new RuntimeException(ex);
             }
+            Scene scene = new Scene(root, HelloApplication.WIDTH, HelloApplication.HEIGHT);
+            window.setScene(scene);
         });
 
-        Label shareLabel = new Label("Shares: " + post.getNumshares());
-        detailsBox.getChildren().addAll(ratingLabel, commentButton, shareLabel);
+
+        detailsBox.getChildren().addAll(ratingButton, commentButton);
 
         HBox controlBox = new HBox();
         controlBox.setAlignment(Pos.CENTER_LEFT);

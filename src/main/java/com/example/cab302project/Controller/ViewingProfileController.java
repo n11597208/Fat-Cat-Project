@@ -67,6 +67,7 @@ public class ViewingProfileController {
     SQLitePostDOA sqLitePostDOA = new SQLitePostDOA();
     SQLiteUserDOA sqLiteUserDOA = new SQLiteUserDOA();
     SQLiteCommentDAO sqLiteCommentDAO = new SQLiteCommentDAO();
+    SQLiteRatingDOA sqLiteRatingDOA = new SQLiteRatingDOA();
 
     private LoginController.Session session;
     public static int id;
@@ -126,6 +127,7 @@ public class ViewingProfileController {
 //        String currentUser = session.getLoggedInUser();
         List<Post> posts = SQLitePostDOA.getPostsByAuthor(ViewingUser.getSelectedUser());
         for (Post post : posts) {
+            System.out.println("Fetched Post ID: " + post.getId());
             VBox postBox = createPostBox(post);
             postsContainer.getChildren().add(postBox);
         }
@@ -165,39 +167,93 @@ public class ViewingProfileController {
         postBox.setAlignment(Pos.CENTER_LEFT);
         postBox.setSpacing(10);
         postBox.setPadding(new Insets(10));
-        postBox.setStyle("-fx-border-color: lightgray; -fx-border-width: 1;");
+        postBox.getStyleClass().add("post-box"); // Add CSS class
+
         ImageView postImageView = new ImageView();
         postImageView.setFitWidth(600);
         postImageView.setFitHeight(400);
         if (post.getPostImage() != null) {
             byte[] imageBytes = post.getPostImage();
-            System.out.println("Image size: " + imageBytes.length);
             postImageView.setImage(new Image(new ByteArrayInputStream(imageBytes)));
-        } else {
-            System.out.println("No image for this post");
         }
+
         Label postTitle = new Label(post.getTitle());
         postTitle.setStyle("-fx-font-size: 18px; -fx-font-weight: bold;");
         Label postDescription = new Label(post.getDescription());
         postDescription.setWrapText(true);
+
         HBox detailsBox = new HBox();
         detailsBox.setAlignment(Pos.CENTER_LEFT);
         detailsBox.setSpacing(10);
-        Label ratingLabel = new Label("Rating: " + post.getRating());
-        Button commentButton = new Button("Comments: " + post.getNumComments());
+        Button ratingButton = new Button("Rating: " + sqLiteRatingDOA.getPostRating(post.getId()));
+        ratingButton.setOnAction(e -> {
+            // Prompt the user for a comment
+            TextInputDialog ratingDialog = new TextInputDialog();
+            ratingDialog.setTitle("Add Rating");
+            ratingDialog.setHeaderText(null);
+            ratingDialog.setContentText("Enter your rating:");
+
+            // Show the dialog and capture the user's input
+            Optional<String> ratingResult = ratingDialog.showAndWait();
+            ratingResult.ifPresent(rating -> {
+                if (rating.trim().isEmpty()) {
+                    // Show a warning if the comment is empty
+                    Alert emptyAlert = new Alert(Alert.AlertType.WARNING);
+                    emptyAlert.setTitle("Warning");
+                    emptyAlert.setHeaderText(null);
+                    emptyAlert.setContentText("Comment cannot be empty!");
+                    emptyAlert.showAndWait();
+                } else {
+                    Rating newRating = new Rating( LoginController.Session.getLoggedInUser(), Float.parseFloat(rating), post.getId() );                    try {
+                        sqLiteRatingDOA.addRating(newRating);
+                        sqLitePostDOA.incrementFollowers(post.getId());
+                    } catch (SQLException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                    Stage window = (Stage) welcomeText1.getScene().getWindow();
+                    FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("ProfileController.fxml"));
+                    Parent root = null;
+                    try {
+                        root = fxmlLoader.load();
+                    } catch (IOException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                    Scene scene = new Scene(root, HelloApplication.WIDTH, HelloApplication.HEIGHT);
+                    window.setScene(scene);
+
+//                    // Add the comment to the commentsBox
+//                    Label commentLabel = new Label(comment);
+//                    commentLabel.setWrapText(true); // Wrap text for long comments
+//                    commentsBox.getChildren().add(commentLabel);
+                }
+            });
+        });
+        Button commentButton = new Button("Comments: " + sqLiteCommentDAO.getNumComments(post.getId()));
         commentButton.setOnAction(e -> {
+            int id = post.getId();
+            setId(id);
+            Stage window = (Stage) welcomeText1.getScene().getWindow();
+            FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("Comment_Section_UI.fxml"));
+            Parent root = null;
             try {
-                displayComments(post);
-            } catch (SQLException ex) {
+                root = fxmlLoader.load();
+            } catch (IOException ex) {
                 throw new RuntimeException(ex);
             }
+            Scene scene = new Scene(root, HelloApplication.WIDTH, HelloApplication.HEIGHT);
+            window.setScene(scene);
         });
-        Label shareLabel = new Label("Shares: " + post.getNumshares());
-        detailsBox.getChildren().addAll(ratingLabel, commentButton, shareLabel);
+
+
+        detailsBox.getChildren().addAll(ratingButton, commentButton);
+
         HBox controlBox = new HBox();
         controlBox.setAlignment(Pos.CENTER_LEFT);
         controlBox.setSpacing(10);
 
+
+
+        // Add comment button and commentsBox
         Button addCommentButton = new Button("Add Comment");
         VBox commentsBox = new VBox();
         commentsBox.setSpacing(10);
@@ -221,13 +277,22 @@ public class ViewingProfileController {
                     emptyAlert.setContentText("Comment cannot be empty!");
                     emptyAlert.showAndWait();
                 } else {
-                    Comment newComment = new Comment( post.getId(), comment,null, LoginController.Session.getLoggedInUser());
-                    sqLitePostDOA.incrementFollowers(post.getId());
-                    try {
+                    Comment newComment = new Comment( post.getId(), comment,null, LoginController.Session.getLoggedInUser());                    try {
                         sqLiteCommentDAO.addComment(newComment);
+                        sqLitePostDOA.incrementFollowers(post.getId());
                     } catch (SQLException ex) {
                         throw new RuntimeException(ex);
                     }
+                    Stage window = (Stage) welcomeText1.getScene().getWindow();
+                    FXMLLoader fxmlLoader = new FXMLLoader(HelloApplication.class.getResource("ProfileController.fxml"));
+                    Parent root = null;
+                    try {
+                        root = fxmlLoader.load();
+                    } catch (IOException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                    Scene scene = new Scene(root, HelloApplication.WIDTH, HelloApplication.HEIGHT);
+                    window.setScene(scene);
 
 //                    // Add the comment to the commentsBox
 //                    Label commentLabel = new Label(comment);
@@ -237,7 +302,7 @@ public class ViewingProfileController {
             });
         });
 
-        controlBox.getChildren().addAll( addCommentButton);
+        controlBox.getChildren().addAll(addCommentButton);
 
         // Add all components to postBox
         postBox.getChildren().addAll(postImageView, postTitle, postDescription, detailsBox, controlBox, commentsBox);
